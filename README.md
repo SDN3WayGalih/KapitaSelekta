@@ -95,4 +95,14 @@ Detail lengkap ada di `.env.example`.
 
 ## Deploy
 
-Project bisa di-deploy ke Vercel atau VPS seperti aplikasi Next.js pada umumnya. Pastikan environment variable di atas diset di server, lalu jalankan `pnpm payload migrate` sebelum `pnpm start`.
+Project ini **tidak memakai Docker**. Database sudah di Supabase (cloud), jadi aplikasi cukup dijalankan sebagai aplikasi Node.js biasa:
+
+- **Vercel** (paling mudah): hubungkan repo GitHub, set environment variable dari `.env.example` di dashboard Vercel, dan tambahkan perintah `pnpm payload migrate` di build command sebelum `pnpm build`.
+- **VPS / server biasa**: install Node.js + pnpm, clone repo, isi `.env`, lalu:
+
+```bash
+pnpm install
+pnpm payload migrate
+pnpm build
+pnpm start
+```
