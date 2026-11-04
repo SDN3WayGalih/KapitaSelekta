@@ -23,3 +23,10 @@ node_modules/
 
 # Prompt
 docs/
+
+# MCP config (berisi PAT Supabase plaintext)
+.mcp.json
+
+# File dev lokal (log & PID dev server)
+.next-dev.log
+.next-dev.pid
