@@ -3,8 +3,17 @@ import React from 'react'
 
 import { Accordion, Counter, GalleryGrid, NewsTabs, Reveal } from '@/components/sekolah/Interactive'
 import type { NewsItem } from '@/components/sekolah/Interactive'
+import {
+  getAgenda,
+  getBerita,
+  getFaq,
+  getGaleri,
+  getProfilSekolah,
+  getTestimoni,
+} from '@/utilities/sekolahData'
 
-const BADGES = [
+/* Fallback dipakai bila CMS belum diisi */
+const FALLBACK_BADGES = [
   { icon: '★', label: 'Akreditasi A' },
   { icon: '🏫', label: 'Sekolah Penggerak' },
   { icon: '😊', label: 'Bebas Bullying' },
@@ -12,7 +21,7 @@ const BADGES = [
   { icon: '🌳', label: 'Lingkungan Asri' },
 ]
 
-const NEWS: NewsItem[] = [
+const FALLBACK_NEWS: NewsItem[] = [
   {
     category: 'prestasi',
     categoryLabel: 'Prestasi',
@@ -36,16 +45,9 @@ const NEWS: NewsItem[] = [
   },
 ]
 
-const GALLERY = [
-  'Kegiatan Belajar',
-  'Upacara Bendera',
-  'Ekstrakurikuler',
-  'Lomba 17 Agustus',
-  'Pramuka',
-  'Wisuda Kelas 6',
-]
+const FALLBACK_GALLERY = ['Kegiatan Belajar', 'Upacara Bendera', 'Ekstrakurikuler', 'Lomba 17 Agustus', 'Pramuka', 'Wisuda Kelas 6']
 
-const FAQ = [
+const FALLBACK_FAQ = [
   {
     answer:
       'Pendaftaran dibuka mulai 1 Juni hingga 30 Juni 2026. Pendaftaran dapat dilakukan langsung di sekolah atau melalui formulir online yang tersedia di website ini.',
@@ -66,13 +68,56 @@ const FAQ = [
   },
 ]
 
-const AGENDA = [
-  { date: '10', month: 'Okt', title: 'Ujian Tengah Semester Ganjil', detail: 'Seluruh kelas 1–6 • 07.30 WIB' },
-  { date: '28', month: 'Okt', title: 'Upacara Hari Sumpah Pemuda', detail: 'Lapangan sekolah • 07.00 WIB' },
-  { date: '15', month: 'Nov', title: 'Lomba Mewarnai Tingkat SD se-Kecamatan', detail: 'Aula sekolah • 08.00 WIB' },
+const FALLBACK_AGENDA = [
+  { date: '10', detail: 'Seluruh kelas 1–6 • 07.30 WIB', month: 'Okt', title: 'Ujian Tengah Semester Ganjil' },
+  { date: '28', detail: 'Lapangan sekolah • 07.00 WIB', month: 'Okt', title: 'Upacara Hari Sumpah Pemuda' },
+  { date: '15', detail: 'Aula sekolah • 08.00 WIB', month: 'Nov', title: 'Lomba Mewarnai Tingkat SD se-Kecamatan' },
 ]
 
-export default function BerandaPage() {
+const FALLBACK_STAT = [
+  { label: 'Siswa Aktif', suffix: '+', value: 300 },
+  { label: 'Guru & Tendik', suffix: '+', value: 25 },
+  { label: 'Rombongan Belajar', value: 12 },
+  { label: 'Prestasi Diraih', suffix: '+', value: 50 },
+]
+
+const FALLBACK_TESTI = [
+  { name: 'Ibu Ratna', quote: 'Guru-gurunya ramah dan perhatian. Anak saya jadi semangat berangkat sekolah setiap pagi.', relation: 'Wali murid kelas 3' },
+  { name: 'Bapak Hendra', quote: 'Fasilitasnya lengkap dan lingkungannya aman. Informasi sekolah juga mudah diakses lewat website ini.', relation: 'Wali murid kelas 5' },
+]
+
+export default async function BerandaPage() {
+  const [profil, news, galeri, faqList, agendaList, testiList] = await Promise.all([
+    getProfilSekolah(),
+    getBerita(6),
+    getGaleri(6),
+    getFaq('ppdb', 6),
+    getAgenda(3),
+    getTestimoni(2),
+  ])
+
+  const badges = profil?.badgeItems?.length ? profil.badgeItems : FALLBACK_BADGES
+  const newsItems = news.length ? news : FALLBACK_NEWS
+  const galleryItems = galeri.length
+    ? galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))
+    : FALLBACK_GALLERY
+  const faq = faqList.length ? faqList : FALLBACK_FAQ
+  const agenda = agendaList.length ? agendaList : FALLBACK_AGENDA
+  const stats = profil?.statItems?.length ? profil.statItems : FALLBACK_STAT
+  const testimoni = testiList.length ? testiList : FALLBACK_TESTI
+
+  const heroBadge = profil?.heroBadge ?? 'Selamat Datang di Website Resmi'
+  const heroTitle = profil?.heroTitle ?? 'SDN 3 Way Galih'
+  const heroSubtitle = profil?.heroSubtitle ?? 'Mencetak Generasi Cerdas & Berkarakter'
+  const heroDescription =
+    profil?.heroDescription ??
+    'Sekolah dasar negeri yang menghadirkan lingkungan belajar yang aman, menyenangkan, dan penuh prestasi untuk putra-putri Anda.'
+  const sambutanQuote =
+    profil?.sambutanQuote ??
+    '"Assalamu\'alaikum warahmatullahi wabarakatuh. Selamat datang di website resmi SDN 3 Way Galih. Website ini kami hadirkan sebagai sarana informasi, publikasi kegiatan, dan jembatan komunikasi antara sekolah dengan orang tua serta masyarakat. Mari bersama-sama memajukan pendidikan anak-anak kita."'
+  const sambutanName = profil?.sambutanName ?? 'Drs. H. Nama Kepala Sekolah, M.Pd.'
+  const sambutanTitle = profil?.sambutanTitle ?? 'Kepala SDN 3 Way Galih'
+
   return (
     <>
       <section className="hero" id="beranda">
@@ -80,20 +125,17 @@ export default function BerandaPage() {
         <div className="container hero-inner">
           <div className="hero-text">
             <Reveal as="span" className="hero-badge">
-              Selamat Datang di Website Resmi
+              {heroBadge}
             </Reveal>
             <Reveal as="div">
               <h1>
-                SDN 3 Way Galih
+                {heroTitle}
                 <br />
-                <span>Mencetak Generasi Cerdas &amp; Berkarakter</span>
+                <span>{heroSubtitle}</span>
               </h1>
             </Reveal>
             <Reveal as="div">
-              <p>
-                Sekolah dasar negeri yang menghadirkan lingkungan belajar yang aman, menyenangkan, dan
-                penuh prestasi untuk putra-putri Anda.
-              </p>
+              <p>{heroDescription}</p>
             </Reveal>
             <Reveal className="hero-cta">
               <Link className="btn btn-gold" href="/profil">
@@ -119,9 +161,9 @@ export default function BerandaPage() {
 
       <section className="badges" id="program">
         <div className="container badges-inner reveal-group">
-          {BADGES.map((b) => (
+          {badges.map((b) => (
             <Reveal className="badge-item" key={b.label}>
-              <span className="badge-icon">{b.icon}</span>
+              <span className="badge-icon">{b.icon || '★'}</span>
               <p>{b.label}</p>
             </Reveal>
           ))}
@@ -138,15 +180,10 @@ export default function BerandaPage() {
           <Reveal className="sambutan-text">
             <span className="section-label">Sambutan</span>
             <h2>Kepala Sekolah</h2>
-            <blockquote>
-              &quot;Assalamu&apos;alaikum warahmatullahi wabarakatuh. Selamat datang di website resmi
-              SDN 3 Way Galih. Website ini kami hadirkan sebagai sarana informasi, publikasi kegiatan,
-              dan jembatan komunikasi antara sekolah dengan orang tua serta masyarakat. Mari
-              bersama-sama memajukan pendidikan anak-anak kita.&quot;
-            </blockquote>
+            <blockquote>{sambutanQuote}</blockquote>
             <p className="sambutan-nama">
-              <strong>Drs. H. Nama Kepala Sekolah, M.Pd.</strong>
-              <small>Kepala SDN 3 Way Galih</small>
+              <strong>{sambutanName}</strong>
+              <small>{sambutanTitle}</small>
             </p>
             <Link className="btn btn-outline-navy" href="/profil">
               Baca Selengkapnya
@@ -159,11 +196,7 @@ export default function BerandaPage() {
         <div className="container">
           <Reveal className="ppdb-card">
             <div className="ppdb-text">
-              <h2>
-                Penerimaan Peserta Didik Baru
-                <br />
-                Tahun Ajaran 2026/2027 Telah Dibuka!
-              </h2>
+              <h2>Penerimaan Peserta Didik Baru</h2>
               <p>Daftarkan putra-putri Anda sekarang. Kuota terbatas, pendaftaran gratis dan mudah.</p>
             </div>
             <Link className="btn btn-gold btn-lg" href="/ppdb">
@@ -177,9 +210,9 @@ export default function BerandaPage() {
         <div className="container">
           <Reveal className="section-head">
             <span className="section-label">Informasi Terkini</span>
-            <h2>Berita &amp; Kegiatan</h2>
+            <h2>Berita & Kegiatan</h2>
           </Reveal>
-          <NewsTabs news={NEWS} />
+          <NewsTabs news={newsItems} />
         </div>
       </section>
 
@@ -189,36 +222,21 @@ export default function BerandaPage() {
             <span className="section-label">Dokumentasi</span>
             <h2>Galeri Sekolah</h2>
           </Reveal>
-          <GalleryGrid items={GALLERY} />
+          <GalleryGrid items={galleryItems} />
         </div>
       </section>
 
       <section className="stats">
         <div className="container stats-inner reveal-group">
-          <Reveal className="stat-item">
-            <strong>
-              <Counter target={300} />+
-            </strong>
-            <p>Siswa Aktif</p>
-          </Reveal>
-          <Reveal className="stat-item">
-            <strong>
-              <Counter target={25} />+
-            </strong>
-            <p>Guru &amp; Tendik</p>
-          </Reveal>
-          <Reveal className="stat-item">
-            <strong>
-              <Counter target={12} />
-            </strong>
-            <p>Rombongan Belajar</p>
-          </Reveal>
-          <Reveal className="stat-item">
-            <strong>
-              <Counter target={50} />+
-            </strong>
-            <p>Prestasi Diraih</p>
-          </Reveal>
+          {stats.map((s) => (
+            <Reveal className="stat-item" key={s.label}>
+              <strong>
+                <Counter target={s.value} />
+                {s.suffix ?? ''}
+              </strong>
+              <p>{s.label}</p>
+            </Reveal>
+          ))}
         </div>
       </section>
 
@@ -228,7 +246,7 @@ export default function BerandaPage() {
             <span className="section-label">Tanya Jawab</span>
             <h2>FAQ PPDB</h2>
           </Reveal>
-          <Accordion items={FAQ} />
+          <Accordion items={faq} />
         </div>
       </section>
 
@@ -239,7 +257,7 @@ export default function BerandaPage() {
             <h2>Agenda Sekolah</h2>
           </Reveal>
           <div className="agenda-list reveal-group">
-            {AGENDA.map((a) => (
+            {agenda.map((a) => (
               <Reveal className="agenda-item" key={a.title}>
                 <div className="agenda-date">
                   <strong>{a.date}</strong>
@@ -262,26 +280,15 @@ export default function BerandaPage() {
             <h2>Testimoni Wali Murid</h2>
           </Reveal>
           <div className="testi-grid reveal-group">
-            <Reveal className="testi-card">
-              <p className="testi-quote">
-                &quot;Guru-gurunya ramah dan perhatian. Anak saya jadi semangat berangkat sekolah setiap
-                pagi.&quot;
-              </p>
-              <p className="testi-name">
-                <strong>Ibu Ratna</strong>
-                <small>Wali murid kelas 3</small>
-              </p>
-            </Reveal>
-            <Reveal className="testi-card">
-              <p className="testi-quote">
-                &quot;Fasilitasnya lengkap dan lingkungannya aman. Informasi sekolah juga mudah diakses
-                lewat website ini.&quot;
-              </p>
-              <p className="testi-name">
-                <strong>Bapak Hendra</strong>
-                <small>Wali murid kelas 5</small>
-              </p>
-            </Reveal>
+            {testimoni.map((t) => (
+              <Reveal className="testi-card" key={t.name}>
+                <p className="testi-quote">"{t.quote}"</p>
+                <p className="testi-name">
+                  <strong>{t.name}</strong>
+                  <small>{t.relation}</small>
+                </p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

@@ -4,13 +4,19 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { Agenda } from './collections/Agenda'
 import { Categories } from './collections/Categories'
+import { Faq } from './collections/Faq'
+import { Galeri } from './collections/Galeri'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Testimoni } from './collections/Testimoni'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { Ppdb } from './globals/Ppdb'
+import { ProfilSekolah } from './globals/ProfilSekolah'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -66,9 +72,9 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, Agenda, Faq, Galeri, Testimoni],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, ProfilSekolah, Ppdb],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

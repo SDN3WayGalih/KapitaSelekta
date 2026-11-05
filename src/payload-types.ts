@@ -72,6 +72,10 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    agenda: Agenda;
+    faq: Faq;
+    galeri: Galeri;
+    testimoni: Testimoni;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +98,10 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    agenda: AgendaSelect<false> | AgendaSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
+    galeri: GaleriSelect<false> | GaleriSelect<true>;
+    testimoni: TestimoniSelect<false> | TestimoniSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -112,10 +120,14 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'profil-sekolah': ProfilSekolah;
+    ppdb: Ppdb;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'profil-sekolah': ProfilSekolahSelect<false> | ProfilSekolahSelect<true>;
+    ppdb: PpdbSelect<false> | PpdbSelect<true>;
   };
   locale: null;
   widgets: {
@@ -221,12 +233,22 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Berita, prestasi, dan pengumuman sekolah.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
 export interface Post {
   id: number;
   title: string;
+  /**
+   * Menentukan tab filter di halaman Berita.
+   */
+  postType: 'berita' | 'prestasi' | 'pengumuman';
+  /**
+   * Ringkasan singkat yang tampil di kartu berita (maks. 200 karakter).
+   */
+  excerpt?: string | null;
   heroImage?: (number | null) | Media;
   content: {
     root: {
@@ -244,6 +266,9 @@ export interface Post {
     [k: string]: unknown;
   };
   relatedPosts?: (number | Post)[] | null;
+  /**
+   * Kategori klasik (opsional), gunakan Jenis Berita untuk filter halaman.
+   */
   categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
@@ -253,6 +278,9 @@ export interface Post {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * Tanggal berita diterbitkan.
+   */
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   populatedAuthors?:
@@ -390,6 +418,8 @@ export interface FolderInterface {
   createdAt: string;
 }
 /**
+ * Kategori berita klasik (opsional). Untuk tab filter halaman Berita gunakan field Jenis Berita di collection Berita.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
@@ -774,6 +804,89 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Daftar kegiatan dan jadwal sekolah yang tampil di halaman beranda.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda".
+ */
+export interface Agenda {
+  id: number;
+  title: string;
+  date: string;
+  /**
+   * Contoh: 07.30 WIB
+   */
+  time?: string | null;
+  /**
+   * Contoh: Lapangan sekolah
+   */
+  location?: string | null;
+  description?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Pertanyaan yang sering diajukan, tampil di beranda dan halaman PPDB.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: string;
+  /**
+   * Menentukan di halaman mana FAQ ini ditampilkan.
+   */
+  category: 'ppdb' | 'umum';
+  /**
+   * Urutan tampil, angka kecil lebih dulu.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Foto kegiatan sekolah, tampil di beranda dan halaman galeri.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galeri".
+ */
+export interface Galeri {
+  id: number;
+  title: string;
+  image: number | Media;
+  /**
+   * Contoh: Kegiatan Belajar, Upacara, Ekstrakurikuler
+   */
+  category?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Kata-kata dari wali murid, tampil di halaman beranda.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimoni".
+ */
+export interface Testimoni {
+  id: number;
+  quote: string;
+  name: string;
+  /**
+   * Contoh: Wali murid kelas 3
+   */
+  relation: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -984,6 +1097,22 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'agenda';
+        value: number | Agenda;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'galeri';
+        value: number | Galeri;
+      } | null)
+    | ({
+        relationTo: 'testimoni';
+        value: number | Testimoni;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1186,6 +1315,8 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  postType?: T;
+  excerpt?: T;
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
@@ -1348,6 +1479,59 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda_select".
+ */
+export interface AgendaSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  time?: T;
+  location?: T;
+  description?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galeri_select".
+ */
+export interface GaleriSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  category?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimoni_select".
+ */
+export interface TestimoniSelect<T extends boolean = true> {
+  quote?: T;
+  name?: T;
+  relation?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1683,6 +1867,110 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Konten profil sekolah: sambutan, visi-misi, statistik, dan kontak. Tampil di beranda dan halaman profil.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profil-sekolah".
+ */
+export interface ProfilSekolah {
+  id: number;
+  heroBadge?: string | null;
+  heroTitle: string;
+  heroSubtitle?: string | null;
+  heroDescription?: string | null;
+  topbarPhone?: string | null;
+  topbarEmail?: string | null;
+  footerAddress?: string | null;
+  footerTagline?: string | null;
+  sambutanQuote?: string | null;
+  sambutanName?: string | null;
+  sambutanTitle?: string | null;
+  visi?: string | null;
+  misi?:
+    | {
+        misiItem: string;
+        id?: string | null;
+      }[]
+    | null;
+  sejarah?: string | null;
+  infoItems?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  struktur?:
+    | {
+        name: string;
+        position: string;
+        id?: string | null;
+      }[]
+    | null;
+  statItems?:
+    | {
+        value: number;
+        /**
+         * Contoh: + (untuk menampilkan 300+)
+         */
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  badgeItems?:
+    | {
+        /**
+         * Emoji atau simbol, contoh: 🏫
+         */
+        icon?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Informasi penerimaan peserta didik baru yang tampil di halaman PPDB dan beranda.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ppdb".
+ */
+export interface Ppdb {
+  id: number;
+  academicYear: string;
+  bannerTitle?: string | null;
+  bannerDescription?: string | null;
+  steps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  timeline?:
+    | {
+        date: string;
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  requirements?:
+    | {
+        requirement: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * File formulir yang dapat diunduh pengunjung (opsional).
+   */
+  registrationForm?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -1724,6 +2012,97 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profil-sekolah_select".
+ */
+export interface ProfilSekolahSelect<T extends boolean = true> {
+  heroBadge?: T;
+  heroTitle?: T;
+  heroSubtitle?: T;
+  heroDescription?: T;
+  topbarPhone?: T;
+  topbarEmail?: T;
+  footerAddress?: T;
+  footerTagline?: T;
+  sambutanQuote?: T;
+  sambutanName?: T;
+  sambutanTitle?: T;
+  visi?: T;
+  misi?:
+    | T
+    | {
+        misiItem?: T;
+        id?: T;
+      };
+  sejarah?: T;
+  infoItems?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  struktur?:
+    | T
+    | {
+        name?: T;
+        position?: T;
+        id?: T;
+      };
+  statItems?:
+    | T
+    | {
+        value?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  badgeItems?:
+    | T
+    | {
+        icon?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ppdb_select".
+ */
+export interface PpdbSelect<T extends boolean = true> {
+  academicYear?: T;
+  bannerTitle?: T;
+  bannerDescription?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  timeline?:
+    | T
+    | {
+        date?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  requirements?:
+    | T
+    | {
+        requirement?: T;
+        id?: T;
+      };
+  registrationForm?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

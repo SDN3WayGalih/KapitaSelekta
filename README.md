@@ -83,14 +83,42 @@ Detail lengkap ada di `.env.example`.
 | `pnpm start` | Jalankan hasil build |
 | `pnpm payload migrate` | Jalankan migrasi database |
 | `pnpm payload migrate:create` | Buat file migrasi baru setelah ubah schema |
+| `pnpm seed:sekolah` | Isi data awal sekolah (agenda, FAQ, berita, testimoni, profil, PPDB) |
 | `pnpm generate:types` | Generate ulang TypeScript types dari schema Payload |
 | `pnpm lint` | Cek linting |
 
+## Mengelola Konten (CMS)
+
+1. Buka `http://localhost:3000/admin`
+2. Saat pertama kali dibuka, buat akun admin (email + password)
+3. Setelah login, tersedia menu berikut pada grup **Konten Sekolah**:
+
+| Menu | Isi |
+|---|---|
+| **Berita & Kegiatan** | Berita, prestasi, pengumuman (dengan gambar, ringkasan, tanggal terbit) |
+| **Agenda Sekolah** | Jadwal kegiatan (tanggal, waktu, lokasi) |
+| **FAQ** | Pertanyaan umum, kategori PPDB/Umum |
+| **Testimoni Wali Murid** | Kutipan dari wali murid |
+| **Galeri** | Foto kegiatan (upload gambar) |
+| **Profil Sekolah** | Hero beranda, sambutan, visi-misi, sejarah, info, struktur, statistik, badge |
+| **PPDB** | Tahun ajaran, banner, alur, timeline, syarat pendaftaran |
+| **Media** | Semua file gambar yang di-upload |
+
+Semua konten tersebut langsung tampil di website setelah dipublikasikan (status **Published**). Bila sebuah bagian belum diisi di CMS, halaman akan menampilkan konten contoh (fallback) agar tampilan tidak kosong.
+
+### Mengisi data awal
+
+```bash
+pnpm seed:sekolah
+```
+
+Perintah ini mengisi collection dan global dengan konten awal sekolah. Aman dijalankan berulang — data lama pada collection konten sekolah akan diganti.
+
 ## Catatan Pengembangan
 
-- **UI sekolah saat ini masih hardcoded** di komponen React (`src/app/(sekolah)/`). Tahap berikutnya adalah menghubungkan konten tersebut ke koleksi Payload agar bisa diedit dari admin panel.
 - Project memakai **pnpm** — gunakan `pnpm`, bukan `npm`/`yarn`, agar lockfile tetap konsisten.
 - Schema database dikelola lewat migrasi Payload. Setelah mengubah koleksi/field, jalankan `pnpm payload migrate:create` lalu `pnpm payload migrate`.
+- Saat migrasi, hentikan `pnpm dev` dulu agar koneksi database tidak terkunci.
 - File `.env` dan `.mcp.json` **tidak boleh di-commit** (sudah ada di `.gitignore`).
 
 ## Deploy

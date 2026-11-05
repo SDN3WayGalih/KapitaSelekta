@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { Reveal } from '@/components/sekolah/Interactive'
+import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
 
-const MISI = [
+const FALLBACK_MISI = [
   'Menyelenggarakan pembelajaran yang aktif, kreatif, dan menyenangkan.',
   'Menanamkan nilai karakter dan akhlak mulia dalam setiap kegiatan.',
   'Mengembangkan potensi peserta didik melalui kegiatan ekstrakurikuler.',
@@ -13,7 +14,7 @@ const MISI = [
   'Menjalin kemitraan yang harmonis dengan orang tua dan masyarakat.',
 ]
 
-const INFO = [
+const FALLBACK_INFO = [
   { label: 'NPSN', value: '1080XXXX' },
   { label: 'Status', value: 'Negeri' },
   { label: 'Akreditasi', value: 'A' },
@@ -22,14 +23,29 @@ const INFO = [
   { label: 'Jam Belajar', value: 'Senin – Jumat, 07.00 – 12.30' },
 ]
 
-const STRUKTUR = [
+const FALLBACK_STRUKTUR = [
   { nama: 'Drs. H. Nama Kepala Sekolah, M.Pd.', jabatan: 'Kepala Sekolah' },
   { nama: 'Nama Wakil, S.Pd.', jabatan: 'Wakil Kepala Sekolah' },
   { nama: 'Nama TU, S.E.', jabatan: 'Kepala Tata Usaha' },
   { nama: 'Nama Komite', jabatan: 'Ketua Komite Sekolah' },
 ]
 
-export default function ProfilPage() {
+const FALLBACK_VISI =
+  'Terwujudnya peserta didik yang cerdas, berkarakter, berakhlak mulia, dan berwawasan lingkungan.'
+
+const FALLBACK_SEJARAH = `SDN 3 Way Galih adalah sekolah dasar negeri yang berlokasi di Kecamatan Tanjung Bintang, Kabupaten Lampung Selatan. Sejak berdiri, sekolah ini berkomitmen memberikan layanan pendidikan dasar yang berkualitas bagi masyarakat sekitar.\n\nDengan dukungan guru-guru bersertifikasi dan fasilitas yang terus ditingkatkan, SDN 3 Way Galih telah meluluskan ribuan siswa yang melanjutkan ke jenjang pendidikan yang lebih tinggi dengan bekal ilmu dan karakter yang kuat.`
+
+export default async function ProfilPage() {
+  const profil = await getProfilSekolah()
+
+  const visi = profil?.visi ?? FALLBACK_VISI
+  const misi = profil?.misi?.length ? profil.misi : FALLBACK_MISI
+  const sejarah = profil?.sejarah ?? FALLBACK_SEJARAH
+  const info = profil?.infoItems?.length ? profil.infoItems : FALLBACK_INFO
+  const struktur = profil?.struktur?.length
+    ? profil.struktur.map((s) => ({ jabatan: s.position, nama: s.name }))
+    : FALLBACK_STRUKTUR
+
   return (
     <>
       <section className="page-hero">
@@ -50,15 +66,12 @@ export default function ProfilPage() {
           <div className="vm-grid reveal-group">
             <Reveal className="vm-card visi">
               <h3>Visi</h3>
-              <p>
-                "Terwujudnya peserta didik yang cerdas, berkarakter, berakhlak mulia, dan
-                berwawasan lingkungan."
-              </p>
+              <p>"{visi}"</p>
             </Reveal>
             <Reveal className="vm-card misi">
               <h3>Misi</h3>
               <ol>
-                {MISI.map((m) => (
+                {misi.map((m) => (
                   <li key={m}>{m}</li>
                 ))}
               </ol>
@@ -75,20 +88,15 @@ export default function ProfilPage() {
           </Reveal>
           <Reveal>
             <div style={{ maxWidth: 820, margin: '0 auto', color: '#4b5563', fontSize: 16 }}>
-              <p style={{ marginBottom: 16 }}>
-                SDN 3 Way Galih adalah sekolah dasar negeri yang berlokasi di Kecamatan Tanjung Bintang,
-                Kabupaten Lampung Selatan. Sejak berdiri, sekolah ini berkomitmen memberikan layanan
-                pendidikan dasar yang berkualitas bagi masyarakat sekitar.
-              </p>
-              <p>
-                Dengan dukungan guru-guru bersertifikasi dan fasilitas yang terus ditingkatkan, SDN 3
-                Way Galih telah meluluskan ribuan siswa yang melanjutkan ke jenjang pendidikan yang
-                lebih tinggi dengan bekal ilmu dan karakter yang kuat.
-              </p>
+              {sejarah.split('\n\n').map((para) => (
+                <p key={para.slice(0, 20)} style={{ marginBottom: 16 }}>
+                  {para}
+                </p>
+              ))}
             </div>
           </Reveal>
           <div className="info-grid reveal-group">
-            {INFO.map((i) => (
+            {info.map((i) => (
               <Reveal className="info-item" key={i.label}>
                 <small>{i.label}</small>
                 <strong>{i.value}</strong>
@@ -105,7 +113,7 @@ export default function ProfilPage() {
             <h2>Struktur Sekolah</h2>
           </Reveal>
           <div className="org-grid reveal-group">
-            {STRUKTUR.map((s) => (
+            {struktur.map((s) => (
               <Reveal className="org-card" key={s.jabatan}>
                 <div className="org-avatar">Foto</div>
                 <strong>{s.nama}</strong>

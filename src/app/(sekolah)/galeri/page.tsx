@@ -2,22 +2,13 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { GalleryGrid, Reveal } from '@/components/sekolah/Interactive'
+import { getGaleri } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Galeri' }
 
-const GALLERY = [
-  'Kegiatan Belajar Mengajar',
-  'Upacara Bendera',
-  'Ekstrakurikuler Pramuka',
-  'Lomba 17 Agustus',
-  'Latihan Futsal',
-  'Seni Tari Daerah',
-  'Gerakan Literasi',
-  'Kerja Bakti Sekolah',
-  'Wisuda Kelas 6',
-]
+export default async function GaleriPage() {
+  const galeri = await getGaleri(24)
 
-export default function GaleriPage() {
   return (
     <>
       <section className="page-hero">
@@ -36,7 +27,15 @@ export default function GaleriPage() {
             <h2>Momen & Kegiatan</h2>
             <p style={{ color: 'var(--gray)', marginTop: 10 }}>Klik foto untuk melihat lebih besar.</p>
           </Reveal>
-          <GalleryGrid items={GALLERY} />
+          {galeri.length > 0 ? (
+            <GalleryGrid items={galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))} />
+          ) : (
+            <Reveal className="center">
+              <p style={{ color: 'var(--gray)' }}>
+                Belum ada foto. Tambahkan melalui menu Galeri di admin panel.
+              </p>
+            </Reveal>
+          )}
         </div>
       </section>
     </>

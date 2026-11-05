@@ -29,6 +29,10 @@ import { slugField } from 'payload'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  labels: {
+    singular: 'Berita',
+    plural: 'Berita & Kegiatan',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -48,7 +52,9 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    defaultColumns: ['title', 'postType', 'publishedAt', 'updatedAt'],
+    description: 'Berita, prestasi, dan pengumuman sekolah.',
+    group: 'Konten Sekolah',
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -69,7 +75,33 @@ export const Posts: CollectionConfig<'posts'> = {
     {
       name: 'title',
       type: 'text',
+      label: 'Judul Berita',
       required: true,
+    },
+    {
+      name: 'postType',
+      type: 'select',
+      admin: {
+        description: 'Menentukan tab filter di halaman Berita.',
+        position: 'sidebar',
+      },
+      defaultValue: 'berita',
+      label: 'Jenis Berita',
+      options: [
+        { label: 'Berita', value: 'berita' },
+        { label: 'Prestasi', value: 'prestasi' },
+        { label: 'Pengumuman', value: 'pengumuman' },
+      ],
+      required: true,
+    },
+    {
+      name: 'excerpt',
+      type: 'textarea',
+      admin: {
+        description: 'Ringkasan singkat yang tampil di kartu berita (maks. 200 karakter).',
+      },
+      label: 'Ringkasan',
+      maxLength: 200,
     },
     {
       type: 'tabs',
@@ -79,6 +111,7 @@ export const Posts: CollectionConfig<'posts'> = {
             {
               name: 'heroImage',
               type: 'upload',
+              label: 'Gambar Utama',
               relationTo: 'media',
             },
             {
@@ -96,7 +129,7 @@ export const Posts: CollectionConfig<'posts'> = {
                   ]
                 },
               }),
-              label: false,
+              label: 'Isi Berita',
               required: true,
             },
           ],
@@ -124,6 +157,7 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'categories',
               type: 'relationship',
               admin: {
+                description: 'Kategori klasik (opsional), gunakan Jenis Berita untuk filter halaman.',
                 position: 'sidebar',
               },
               hasMany: true,
@@ -168,6 +202,7 @@ export const Posts: CollectionConfig<'posts'> = {
         date: {
           pickerAppearance: 'dayAndTime',
         },
+        description: 'Tanggal berita diterbitkan.',
         position: 'sidebar',
       },
       hooks: {

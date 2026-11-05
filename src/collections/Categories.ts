@@ -13,6 +13,7 @@ export const Categories: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    description: 'Kategori berita klasik (opsional). Untuk tab filter halaman Berita gunakan field Jenis Berita di collection Berita.',
     useAsTitle: 'title',
   },
   fields: [

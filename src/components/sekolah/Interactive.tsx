@@ -189,43 +189,57 @@ export type NewsItem = {
   categoryLabel: string
   thumbClass: string
   excerpt?: string
+  slug?: string
 }
 
 /** Galeri dengan lightbox */
-export function GalleryGrid({ items }: { items: string[] }) {
-  const [activeCaption, setActiveCaption] = useState<string | null>(null)
+export type GalleryItem = { caption: string; imageUrl?: string | null }
+
+export function GalleryGrid({ items }: { items: (string | GalleryItem)[] }) {
+  const normalized: GalleryItem[] = items.map((i) =>
+    typeof i === 'string' ? { caption: i, imageUrl: null } : i,
+  )
+  const [active, setActive] = useState<GalleryItem | null>(null)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActiveCaption(null)
+      if (e.key === 'Escape') setActive(null)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [])
 
-  const show = activeCaption !== null
+  const show = active !== null
 
   return (
     <>
       <div className="gallery-grid reveal-group">
-        {items.map((item) => (
-          <div className="gallery-item reveal" key={item} onClick={() => setActiveCaption(item)}>
-            <span>{item}</span>
+        {normalized.map((item, i) => (
+          <div className="gallery-item reveal" key={`${item.caption}-${i}`} onClick={() => setActive(item)}>
+            {item.imageUrl ? (
+              <img alt={item.caption} src={item.imageUrl} />
+            ) : (
+              <span>{item.caption}</span>
+            )}
           </div>
         ))}
       </div>
       <div
         className={`lightbox${show ? ' show' : ''}`}
         id="lightbox"
-        onClick={() => setActiveCaption(null)}
+        onClick={() => setActive(null)}
       >
         <button aria-label="Tutup" className="lightbox-close" type="button">
           &times;
         </button>
         <div className="lightbox-box">
-          <span>Foto</span>
+          {active?.imageUrl ? (
+            <img alt={active.caption} src={active.imageUrl} />
+          ) : (
+            <span>Foto</span>
+          )}
         </div>
-        <p id="lightboxCaption">{activeCaption}</p>
+        <p id="lightboxCaption">{active?.caption}</p>
       </div>
     </>
   )
