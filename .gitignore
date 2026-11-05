@@ -30,3 +30,4 @@ docs/
 # File dev lokal (log & PID dev server)
 .next-dev.log
 .next-dev.pid
+tsconfig.tsbuildinfo
