@@ -4,6 +4,16 @@ import React from 'react'
 import { Accordion, Counter, GalleryGrid, NewsTabs, Reveal } from '@/components/sekolah/Interactive'
 import type { NewsItem } from '@/components/sekolah/Interactive'
 import {
+  AcademicCapIcon,
+  ArrowRightIcon,
+  AwardIcon,
+  LeafIcon,
+  SchoolIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  UserIcon,
+} from '@/components/sekolah/Icons'
+import {
   getAgenda,
   getBerita,
   getFaq,
@@ -12,13 +22,23 @@ import {
   getTestimoni,
 } from '@/utilities/sekolahData'
 
-/* Fallback dipakai bila CMS belum diisi */
+/* Icon mapping untuk badge keunggulan tanpa emoji */
+function renderBadgeIcon(label: string) {
+  const lower = label.toLowerCase()
+  if (lower.includes('akreditasi') || lower.includes('prestasi')) return <AwardIcon size={28} />
+  if (lower.includes('penggerak') || lower.includes('gedung') || lower.includes('sekolah')) return <SchoolIcon size={28} />
+  if (lower.includes('bullying') || lower.includes('aman') || lower.includes('ramah')) return <ShieldCheckIcon size={28} />
+  if (lower.includes('guru') || lower.includes('sertifikasi') || lower.includes('didik')) return <AcademicCapIcon size={28} />
+  if (lower.includes('asri') || lower.includes('lingkungan') || lower.includes('adiwiyata')) return <LeafIcon size={28} />
+  return <SparklesIcon size={28} />
+}
+
 const FALLBACK_BADGES = [
-  { icon: '★', label: 'Akreditasi A' },
-  { icon: '🏫', label: 'Sekolah Penggerak' },
-  { icon: '😊', label: 'Bebas Bullying' },
-  { icon: '🎓', label: 'Guru Bersertifikasi' },
-  { icon: '🌳', label: 'Lingkungan Asri' },
+  { label: 'Akreditasi A' },
+  { label: 'Sekolah Penggerak' },
+  { label: 'Bebas Bullying' },
+  { label: 'Guru Bersertifikasi' },
+  { label: 'Lingkungan Asri' },
 ]
 
 const FALLBACK_NEWS: NewsItem[] = [
@@ -45,7 +65,14 @@ const FALLBACK_NEWS: NewsItem[] = [
   },
 ]
 
-const FALLBACK_GALLERY = ['Kegiatan Belajar', 'Upacara Bendera', 'Ekstrakurikuler', 'Lomba 17 Agustus', 'Pramuka', 'Wisuda Kelas 6']
+const FALLBACK_GALLERY = [
+  'Kegiatan Belajar Mengajar',
+  'Upacara Bendera',
+  'Kegiatan Pramuka',
+  'Lomba 17 Agustus',
+  'Pentas Seni Siswa',
+  'Wisuda Kelas 6',
+]
 
 const FALLBACK_FAQ = [
   {
@@ -121,11 +148,12 @@ export default async function BerandaPage() {
   return (
     <>
       <section className="hero" id="beranda">
-        <div className="hero-bg"></div>
+        <div className="hero-bg" />
         <div className="container hero-inner">
           <div className="hero-text">
             <Reveal as="span" className="hero-badge">
-              {heroBadge}
+              <SparklesIcon size={16} />
+              <span>{heroBadge}</span>
             </Reveal>
             <Reveal as="div">
               <h1>
@@ -139,31 +167,37 @@ export default async function BerandaPage() {
             </Reveal>
             <Reveal className="hero-cta">
               <Link className="btn btn-gold" href="/profil">
-                Jelajahi Sekolah
+                <span>Jelajahi Profil</span>
+                <ArrowRightIcon size={16} />
               </Link>
               <Link className="btn btn-outline-light" href="/ppdb">
-                Info PPDB
+                Info PPDB 2026
               </Link>
             </Reveal>
           </div>
           <Reveal className="hero-media">
-            <div className="hero-photo">
-              <span>Foto Sekolah</span>
+            <div className="hero-photo-card">
+              <div className="hero-photo-illustration">
+                <SchoolIcon size={64} className="hero-ill-icon" />
+                <span className="hero-photo-label">Gedung SDN 3 Way Galih</span>
+              </div>
             </div>
             <div className="hero-card-float">
               <strong>300+</strong>
-              <small>Siswa Aktif</small>
+              <small>Siswa Aktif Terdaftar</small>
             </div>
           </Reveal>
         </div>
-        <div className="hero-wave"></div>
+        <div className="hero-wave" />
       </section>
 
       <section className="badges" id="program">
         <div className="container badges-inner reveal-group">
           {badges.map((b) => (
             <Reveal className="badge-item" key={b.label}>
-              <span className="badge-icon">{b.icon || '★'}</span>
+              <span className="badge-icon-box">
+                {renderBadgeIcon(b.label)}
+              </span>
               <p>{b.label}</p>
             </Reveal>
           ))}
@@ -173,12 +207,12 @@ export default async function BerandaPage() {
       <section className="sambutan section" id="profil">
         <div className="container sambutan-inner">
           <Reveal className="sambutan-photo">
-            <div className="photo-circle">
-              <span>Foto</span>
+            <div className="photo-circle" aria-label="Foto Kepala Sekolah">
+              <UserIcon size={72} />
             </div>
           </Reveal>
           <Reveal className="sambutan-text">
-            <span className="section-label">Sambutan</span>
+            <span className="section-label">Kata Sambutan</span>
             <h2>Kepala Sekolah</h2>
             <blockquote>{sambutanQuote}</blockquote>
             <p className="sambutan-nama">
@@ -186,7 +220,8 @@ export default async function BerandaPage() {
               <small>{sambutanTitle}</small>
             </p>
             <Link className="btn btn-outline-navy" href="/profil">
-              Baca Selengkapnya
+              <span>Baca Profil Lengkap</span>
+              <ArrowRightIcon size={14} />
             </Link>
           </Reveal>
         </div>
@@ -196,11 +231,13 @@ export default async function BerandaPage() {
         <div className="container">
           <Reveal className="ppdb-card">
             <div className="ppdb-text">
+              <span className="ppdb-tag">Tahun Ajaran 2026/2027</span>
               <h2>Penerimaan Peserta Didik Baru</h2>
               <p>Daftarkan putra-putri Anda sekarang. Kuota terbatas, pendaftaran gratis dan mudah.</p>
             </div>
             <Link className="btn btn-gold btn-lg" href="/ppdb">
-              Daftar Sekarang
+              <span>Daftar Sekarang</span>
+              <ArrowRightIcon size={18} />
             </Link>
           </Reveal>
         </div>
@@ -253,7 +290,7 @@ export default async function BerandaPage() {
       <section className="agenda section section-alt" id="agenda">
         <div className="container">
           <Reveal className="section-head">
-            <span className="section-label">Jadwal</span>
+            <span className="section-label">Kalender Akademik</span>
             <h2>Agenda Sekolah</h2>
           </Reveal>
           <div className="agenda-list reveal-group">
@@ -283,10 +320,15 @@ export default async function BerandaPage() {
             {testimoni.map((t) => (
               <Reveal className="testi-card" key={t.name}>
                 <p className="testi-quote">"{t.quote}"</p>
-                <p className="testi-name">
-                  <strong>{t.name}</strong>
-                  <small>{t.relation}</small>
-                </p>
+                <div className="testi-author">
+                  <div className="testi-avatar" aria-hidden="true">
+                    <UserIcon size={20} />
+                  </div>
+                  <p className="testi-name">
+                    <strong>{t.name}</strong>
+                    <small>{t.relation}</small>
+                  </p>
+                </div>
               </Reveal>
             ))}
           </div>

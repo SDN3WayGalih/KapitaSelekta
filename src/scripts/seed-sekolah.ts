@@ -18,10 +18,14 @@ async function run() {
   const ctx = { disableRevalidate: true }
 
   payload.logger.info('— Membersihkan data lama...')
-  for (const collection of ['agenda', 'faq', 'galeri', 'testimoni'] as const) {
-    const existing = await payload.find({ collection, limit: 500, depth: 0 })
-    for (const doc of existing.docs) {
-      await payload.delete({ collection, id: doc.id, context: ctx })
+  for (const collection of ['agenda', 'faq', 'galeri', 'testimoni', 'posts'] as const){
+    const existing = await payload.find({collection, limit: 500, depth: 0})
+    for (const doc of existing.docs){
+      await payload.delete({
+        collection,
+        id: doc.id,
+        context: ctx
+      })
     }
   }
 
@@ -142,43 +146,64 @@ async function run() {
     },
   ]
   for (const item of beritaData) {
-    await payload.create({
+    const existing = await payload.find({
       collection: 'posts',
-      context: ctx,
-      data: {
-        ...item,
-        _status: 'published',
-        content: {
-          root: {
-            children: [
-              {
-                children: [
-                  {
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: item.excerpt,
-                    type: 'text',
-                    version: 1,
-                  },
-                ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                type: 'paragraph',
-                version: 1,
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            type: 'root',
-            version: 1,
-          },
+      where: {
+        slug: {
+          equals: item.slug,
         },
       },
+      limit: 1,
     })
+
+    const postPayload = {
+      ...item,
+      _status: 'published' as const,
+      content: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: item.excerpt,
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr' as const,
+              format: '' as const,
+              indent: 0,
+              type: 'paragraph',
+              version: 1,
+            },
+          ],
+          direction: 'ltr' as const,
+          format: '' as const,
+          indent: 0,
+          type: 'root',
+          version: 1,
+        },
+      },
+    }
+
+    if (existing.totalDocs > 0) {
+      await payload.update({
+        collection: 'posts',
+        id: existing.docs[0].id,
+        context: ctx,
+        data: postPayload,
+      })
+    } else {
+      await payload.create({
+        collection: 'posts',
+        context: ctx,
+        data: postPayload,
+      })
+    }
   }
 
   /* ---------------------------- PROFIL SEKOLAH ------------------------ */
@@ -187,11 +212,11 @@ async function run() {
     slug: 'profil-sekolah',
     data: {
       badgeItems: [
-        { icon: '★', label: 'Akreditasi A' },
-        { icon: '🏫', label: 'Sekolah Penggerak' },
-        { icon: '😊', label: 'Bebas Bullying' },
-        { icon: '🎓', label: 'Guru Bersertifikasi' },
-        { icon: '🌳', label: 'Lingkungan Asri' },
+        { icon: 'award', label: 'Akreditasi A' },
+        { icon: 'school', label: 'Sekolah Penggerak' },
+        { icon: 'shield', label: 'Bebas Bullying' },
+        { icon: 'academic', label: 'Guru Bersertifikasi' },
+        { icon: 'leaf', label: 'Lingkungan Asri' },
       ],
       footerAddress: 'Jl. Pendidikan No. 3, Way Galih\nKec. Tanjung Bintang, Lampung Selatan',
       footerTagline: 'Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.',

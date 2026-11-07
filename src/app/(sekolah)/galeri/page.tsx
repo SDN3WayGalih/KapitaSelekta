@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
 import { GalleryGrid, Reveal } from '@/components/sekolah/Interactive'
@@ -15,7 +16,7 @@ export default async function GaleriPage() {
         <div className="container">
           <h1>Galeri Sekolah</h1>
           <p className="breadcrumb">
-            <a href="/">Beranda</a> / Galeri
+            <Link href="/">Beranda</Link> / Galeri
           </p>
         </div>
       </section>

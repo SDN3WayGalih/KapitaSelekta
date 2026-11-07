@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { ArrowRightIcon } from '@/components/sekolah/Icons'
 import { NewsTabs, Reveal } from '@/components/sekolah/Interactive'
 import { getBerita } from '@/utilities/sekolahData'
 
@@ -17,7 +19,7 @@ export default async function BeritaPage() {
         <div className="container">
           <h1>Berita & Kegiatan</h1>
           <p className="breadcrumb">
-            <a href="/">Beranda</a> / Berita & Kegiatan
+            <Link href="/">Beranda</Link> / Berita & Kegiatan
           </p>
         </div>
       </section>
@@ -33,9 +35,10 @@ export default async function BeritaPage() {
                 <small>{featured.date}</small>
                 <h3>{featured.title}</h3>
                 <p>{featured.excerpt ?? 'Klik untuk membaca selengkapnya.'}</p>
-                <a className="news-link" href="#">
-                  Baca Selengkapnya &rarr;
-                </a>
+                <Link className="news-link" href={featured.slug ? `/posts/${featured.slug}` : '#'}>
+                  <span>Baca Selengkapnya</span>
+                  <ArrowRightIcon size={16} />
+                </Link>
               </div>
             </Reveal>
           )}

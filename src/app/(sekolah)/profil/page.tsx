@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { UserIcon } from '@/components/sekolah/Icons'
 import { Reveal } from '@/components/sekolah/Interactive'
 import { getProfilSekolah } from '@/utilities/sekolahData'
 
@@ -52,7 +54,7 @@ export default async function ProfilPage() {
         <div className="container">
           <h1>Profil Sekolah</h1>
           <p className="breadcrumb">
-            <a href="/">Beranda</a> / Profil Sekolah
+            <Link href="/">Beranda</Link> / Profil Sekolah
           </p>
         </div>
       </section>
@@ -115,7 +117,9 @@ export default async function ProfilPage() {
           <div className="org-grid reveal-group">
             {struktur.map((s) => (
               <Reveal className="org-card" key={s.jabatan}>
-                <div className="org-avatar">Foto</div>
+                <div className="org-avatar" aria-label={`Avatar ${s.nama}`}>
+                  <UserIcon size={36} />
+                </div>
                 <strong>{s.nama}</strong>
                 <small>{s.jabatan}</small>
               </Reveal>
