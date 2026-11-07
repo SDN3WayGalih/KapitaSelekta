@@ -31,3 +31,5 @@ docs/
 .next-dev.log
 .next-dev.pid
 tsconfig.tsbuildinfo
+
+.agents
