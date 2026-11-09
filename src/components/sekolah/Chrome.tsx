@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { ArrowUpRight } from 'lucide-react'
+
 
 const NAV_ITEMS = [
   { href: '/', label: 'Beranda' },
@@ -10,7 +12,7 @@ const NAV_ITEMS = [
   { href: '/program', label: 'Program' },
   { href: '/berita', label: 'Berita' },
   { href: '/galeri', label: 'Galeri' },
-  { href: '/ppdb', label: 'PPDB' },
+  { href: 'https://sd.spmblampung.com', label: 'PPDB', external: true},
   { href: '/kontak', label: 'Kontak' },
 ]
 
@@ -22,9 +24,14 @@ export function Topbar() {
           <span>&#9742; (0721) 123456</span>
           <span>&#9993; info@sdn3waygalih.sch.id</span>
         </div>
-        <Link href="/ppdb" className="btn btn-gold btn-sm">
-          PPDB 2026
-        </Link>
+        <a
+          href="https://sd.pmblampung.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-gold btn-sm"
+        >
+          PPDB 2026 <ArrowUpRight size={14} style={{ marginLeft: 4 }} />
+        </a>
       </div>
     </div>
   )
@@ -61,10 +68,14 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
               className={`nav-link${pathname === item.href ? ' active' : ''}`}
             >
               {item.label}
+              {item.external && <ArrowUpRight size={14} style={{ marginLeft: 4 }} />}
             </Link>
+
           ))}
         </nav>
         <button
@@ -102,7 +113,7 @@ export function Footer() {
           <h4>Tautan Cepat</h4>
           <Link href="/profil">Profil Sekolah</Link>
           <Link href="/berita">Berita</Link>
-          <Link href="/ppdb">PPDB</Link>
+          <Link href="https://sd.spmblampung.com">PPDB</Link>
           <Link href="/galeri">Galeri</Link>
         </div>
         <div className="footer-col reveal">
