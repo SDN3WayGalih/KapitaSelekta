@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { UserIcon } from '@/components/sekolah/Icons'
-import { Reveal } from '@/components/sekolah/Interactive'
+import { AcademicCapIcon, BookOpenIcon, SchoolIcon, UserIcon } from '@/components/sekolah/Icons'
 import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
@@ -17,19 +16,19 @@ const FALLBACK_MISI = [
 ]
 
 const FALLBACK_INFO = [
-  { label: 'NPSN', value: '1080XXXX' },
-  { label: 'Status', value: 'Negeri' },
-  { label: 'Akreditasi', value: 'A' },
+  { label: 'NPSN', value: '10801831' },
+  { label: 'Status Sekolah', value: 'Negeri' },
+  { label: 'Akreditasi', value: 'Peringkat A' },
   { label: 'Kurikulum', value: 'Kurikulum Merdeka' },
   { label: 'Jumlah Rombel', value: '12 Rombongan Belajar' },
-  { label: 'Jam Belajar', value: 'Senin – Jumat, 07.00 – 12.30' },
+  { label: 'Jam Pelayanan Belajar', value: 'Senin - Jumat, 07.00 - 12.30 WIB' },
 ]
 
 const FALLBACK_STRUKTUR = [
-  { nama: 'Drs. H. Nama Kepala Sekolah, M.Pd.', jabatan: 'Kepala Sekolah' },
-  { nama: 'Nama Wakil, S.Pd.', jabatan: 'Wakil Kepala Sekolah' },
-  { nama: 'Nama TU, S.E.', jabatan: 'Kepala Tata Usaha' },
-  { nama: 'Nama Komite', jabatan: 'Ketua Komite Sekolah' },
+  { jabatan: 'Pimpinan Lembaga', nama: 'Kepala Sekolah' },
+  { jabatan: 'Bidang Kurikulum & Akademik', nama: 'Koordinator Kurikulum' },
+  { jabatan: 'Administrasi & Data Pokok', nama: 'Tata Usaha' },
+  { jabatan: 'Kemitraan & Perwakilan Wali Murid', nama: 'Komite Sekolah' },
 ]
 
 const FALLBACK_VISI =
@@ -61,48 +60,44 @@ export default async function ProfilPage() {
 
       <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Visi & Misi</span>
-            <h2>Arah & Tujuan Kami</h2>
-          </Reveal>
+          <div className="section-head">
+            <h2>Visi dan Misi</h2>
+          </div>
           <div className="vm-grid reveal-group">
-            <Reveal className="vm-card visi">
-              <h3>Visi</h3>
+            <div className="vm-card visi">
+              <h3>Visi Sekolah</h3>
               <p>"{visi}"</p>
-            </Reveal>
-            <Reveal className="vm-card misi">
-              <h3>Misi</h3>
+            </div>
+            <div className="vm-card misi">
+              <h3>Misi Sekolah</h3>
               <ol>
                 {misi.map((m) => (
                   <li key={m}>{m}</li>
                 ))}
               </ol>
-            </Reveal>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section section-alt">
+      <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Tentang Kami</span>
+          <div className="section-head">
             <h2>Sejarah Singkat</h2>
-          </Reveal>
-          <Reveal>
-            <div style={{ maxWidth: 820, margin: '0 auto', color: '#4b5563', fontSize: 16 }}>
-              {sejarah.split('\n\n').map((para) => (
-                <p key={para.slice(0, 20)} style={{ marginBottom: 16 }}>
-                  {para}
-                </p>
-              ))}
-            </div>
-          </Reveal>
-          <div className="info-grid reveal-group">
+          </div>
+          <div style={{ maxWidth: 820, margin: '0 auto', color: '#4b5563', fontSize: 16 }}>
+            {sejarah.split('\n\n').map((para) => (
+              <p key={para.slice(0, 20)} style={{ marginBottom: 16 }}>
+                {para}
+              </p>
+            ))}
+          </div>
+          <div className="info-grid reveal-group" style={{ marginTop: 40 }}>
             {info.map((i) => (
-              <Reveal className="info-item" key={i.label}>
+              <div className="info-item" key={i.label}>
                 <small>{i.label}</small>
                 <strong>{i.value}</strong>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
@@ -110,19 +105,18 @@ export default async function ProfilPage() {
 
       <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Organisasi</span>
-            <h2>Struktur Sekolah</h2>
-          </Reveal>
+          <div className="section-head">
+            <h2>Struktur Organisasi</h2>
+          </div>
           <div className="org-grid reveal-group">
             {struktur.map((s) => (
-              <Reveal className="org-card" key={s.jabatan}>
-                <div className="org-avatar" aria-label={`Avatar ${s.nama}`}>
-                  <UserIcon size={36} />
+              <div className="org-card" key={s.jabatan}>
+                <div className="org-avatar" aria-hidden="true">
+                  <SchoolIcon size={28} />
                 </div>
                 <strong>{s.nama}</strong>
                 <small>{s.jabatan}</small>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
@@ -130,3 +124,4 @@ export default async function ProfilPage() {
     </>
   )
 }
+

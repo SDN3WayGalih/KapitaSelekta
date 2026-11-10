@@ -1,7 +1,15 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
-import { ArrowRightIcon, CheckIcon, ChevronDownIcon, CloseIcon, ImageIcon } from './Icons'
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  CloseIcon,
+  ImageIcon,
+  ShareIcon,
+} from './Icons'
 
 /** Animasi reveal saat elemen masuk viewport */
 export function Reveal({
@@ -195,10 +203,10 @@ export function NewsTabs({ news }: { news: NewsItem[] }) {
               <small>{n.date}</small>
               <h3>{n.title}</h3>
               {n.excerpt && <p className="news-excerpt">{n.excerpt}</p>}
-              <a className="news-link" href={n.slug ? `/posts/${n.slug}` : '#'}>
+              <Link className="news-link" href={n.slug ? `/berita/${n.slug}` : '#'}>
                 <span>Baca Selengkapnya</span>
                 <ArrowRightIcon size={14} />
-              </a>
+              </Link>
             </div>
           </article>
         ))}
@@ -328,3 +336,52 @@ export function ContactForm() {
     </div>
   )
 }
+
+/** Tombol bagikan artikel dengan fallback salin tautan */
+export function ShareButton({ title }: { title: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = async () => {
+    if (typeof window === 'undefined') return
+    try {
+      if (typeof navigator !== 'undefined' && 'share' in navigator) {
+        try {
+          await navigator.share({
+            title,
+            url: window.location.href,
+          })
+          return
+        } catch {
+          // Jika pengguna membatalkan atau tidak support, fallback ke clipboard
+        }
+      }
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(window.location.href)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2500)
+      }
+    } catch {}
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleShare}
+      className="btn btn-outline-navy article-share-btn"
+      aria-label="Bagikan artikel ini"
+    >
+      {copied ? (
+        <>
+          <CheckIcon size={16} />
+          <span>Tautan Tersalin!</span>
+        </>
+      ) : (
+        <>
+          <ShareIcon size={16} />
+          <span>Bagikan Berita</span>
+        </>
+      )}
+    </button>
+  )
+}
+

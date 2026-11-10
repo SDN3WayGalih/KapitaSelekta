@@ -27,30 +27,30 @@ export default async function BeritaPage() {
       <section className="section">
         <div className="container">
           {featured && (
-            <Reveal className="news-featured">
-              <div className="news-featured-thumb">
+            <div className="news-featured">
+              <div className={`news-featured-thumb ${featured.thumbClass}`}>
                 <span className="news-cat">{featured.categoryLabel}</span>
               </div>
               <div className="news-featured-body">
                 <small>{featured.date}</small>
                 <h3>{featured.title}</h3>
                 <p>{featured.excerpt ?? 'Klik untuk membaca selengkapnya.'}</p>
-                <Link className="news-link" href={featured.slug ? `/posts/${featured.slug}` : '#'}>
+                <Link className="news-link" href={featured.slug ? `/berita/${featured.slug}` : '#'}>
                   <span>Baca Selengkapnya</span>
                   <ArrowRightIcon size={16} />
                 </Link>
               </div>
-            </Reveal>
+            </div>
           )}
 
           {rest.length > 0 ? (
             <NewsTabs news={rest} />
           ) : (
-            <Reveal className="center">
+            <div className="center">
               <p style={{ color: 'var(--gray)' }}>
                 Belum ada berita lainnya. Konten dapat ditambahkan melalui admin panel.
               </p>
-            </Reveal>
+            </div>
           )}
         </div>
       </section>

@@ -54,7 +54,7 @@ export default function ProgramPage() {
     <>
       <section className="page-hero">
         <div className="container">
-          <h1>Program Sekolah</h1>
+          <h1>Program & Kurikulum Sekolah</h1>
           <p className="breadcrumb">
             <Link href="/">Beranda</Link> / Program Sekolah
           </p>
@@ -63,39 +63,37 @@ export default function ProgramPage() {
 
       <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Fokus Utama</span>
+          <div className="section-head">
             <h2>Program Unggulan</h2>
-          </Reveal>
+          </div>
           <div className="program-grid reveal-group">
             {PROGRAM.map((p) => (
-              <Reveal className="program-card" key={p.title}>
+              <div className="program-card" key={p.title}>
                 <div className="program-icon" aria-hidden="true">
                   {p.icon}
                 </div>
                 <h3>{p.title}</h3>
                 <p>{p.desc}</p>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section section-alt">
+      <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Bakat & Minat</span>
+          <div className="section-head">
             <h2>Ekstrakurikuler</h2>
-          </Reveal>
+          </div>
           <div className="ekskul-grid reveal-group">
             {EKSKUL.map((e) => (
-              <Reveal className="ekskul-item" key={e.nama}>
+              <div className="ekskul-item" key={e.nama}>
                 <span className="ekskul-icon" aria-hidden="true">
                   {e.icon}
                 </span>
                 <h4>{e.nama}</h4>
                 <p>{e.jadwal}</p>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>

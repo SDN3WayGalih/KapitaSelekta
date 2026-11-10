@@ -151,7 +151,7 @@ export function Footer() {
           </p>
           <p className="footer-contact-item">
             <ClockIcon size={16} className="footer-icon" />
-            <span>Senin – Jumat, 07.00 – 15.00 WIB</span>
+            <span>Senin - Jumat, 07.00 - 15.00 WIB</span>
           </p>
         </div>
       </div>

@@ -26,7 +26,7 @@ const CARDS = [
   {
     icon: <ClockIcon size={24} />,
     label: 'Jam Pelayanan',
-    value: 'Senin – Jumat\n07.00 – 15.00 WIB',
+    value: 'Senin - Jumat\n07.00 - 15.00 WIB',
   },
 ]
 
@@ -35,7 +35,7 @@ export default function KontakPage() {
     <>
       <section className="page-hero">
         <div className="container">
-          <h1>Kontak Kami</h1>
+          <h1>Kontak & Lokasi Sekolah</h1>
           <p className="breadcrumb">
             <Link href="/">Beranda</Link> / Kontak
           </p>
@@ -44,7 +44,7 @@ export default function KontakPage() {
 
       <section className="section">
         <div className="container contact-grid">
-          <Reveal>
+          <div>
             <div className="contact-cards">
               {CARDS.map((card) => (
                 <div className="contact-card" key={card.label}>
@@ -58,9 +58,9 @@ export default function KontakPage() {
             </div>
             <div className="map-placeholder">
               <MapPinIcon size={32} />
-              <span>Lokasi SDN 3 Way Galih (Tanjung Bintang)</span>
+              <span>Lokasi SDN 3 Way Galih (Tanjung Bintang, Lampung Selatan)</span>
             </div>
-          </Reveal>
+          </div>
           <ContactForm />
         </div>
       </section>

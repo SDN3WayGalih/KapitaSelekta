@@ -12,10 +12,10 @@ import { BackToTop, Footer, Navbar, Topbar } from '@/components/sekolah/Chrome'
 import './sekolah.css'
 
 export const metadata: Metadata = {
-  description: 'Website resmi SDN 3 Way Galih — informasi sekolah, berita, kegiatan, dan PPDB.',
+  description: 'Website resmi SDN 3 Way Galih: informasi sekolah, berita, kegiatan, dan PPDB.',
   title: {
-    default: 'SDN 3 Way Galih — Sekolah Dasar Negeri',
-    template: '%s — SDN 3 Way Galih',
+    default: 'SDN 3 Way Galih | Sekolah Dasar Negeri',
+    template: '%s | SDN 3 Way Galih',
   },
 }
 

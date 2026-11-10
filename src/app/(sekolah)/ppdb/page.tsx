@@ -2,32 +2,32 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { CheckIcon, DownloadIcon } from '@/components/sekolah/Icons'
+import { CheckIcon } from '@/components/sekolah/Icons'
 import { Accordion, Reveal } from '@/components/sekolah/Interactive'
 import { getFaq, getPpdb } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'PPDB' }
 
 const FALLBACK_STEPS = [
-  ['1', 'Isi Formulir', 'Ambil formulir di sekolah atau unduh formulir digital melalui website ini.'],
-  ['2', 'Serahkan Berkas', 'Serahkan formulir beserta dokumen persyaratan ke panitia PPDB di sekolah.'],
-  ['3', 'Verifikasi', 'Panitia memverifikasi keabsahan dan kelengkapan berkas pendaftaran.'],
-  ['4', 'Pengumuman', 'Hasil seleksi diumumkan melalui papan pengumuman sekolah dan website resmi.'],
+  ['1', 'Pengambilan Formulir', 'Formulir pendaftaran dapat diambil langsung di sekretariat panitia PPDB sekolah pada jam pelayanan.'],
+  ['2', 'Penyerahan Dokumen', 'Serahkan formulir yang telah diisi beserta berkas persyaratan administrasi ke panitia PPDB.'],
+  ['3', 'Verifikasi Data', 'Panitia memverifikasi keabsahan data kependudukan dan usia calon peserta didik.'],
+  ['4', 'Pengumuman & Daftar Ulang', 'Hasil seleksi diumumkan secara terbuka di papan pengumuman sekolah dan portal resmi.'],
 ] as const
 
 const FALLBACK_TIMELINE = [
-  ['1 – 30 Jun', 'Pendaftaran', 'Pengisian formulir dan penyerahan berkas di loket PPDB sekolah.'],
-  ['1 – 5 Jul', 'Verifikasi Berkas', 'Pemeriksaan kelengkapan dokumen administratif oleh panitia.'],
-  ['8 Jul', 'Pengumuman Hasil', 'Diumumkan serentak di sekolah dan website resmi.'],
-  ['9 – 12 Jul', 'Daftar Ulang', 'Konfirmasi ulang berkas bagi calon peserta didik yang diterima.'],
+  ['1 - 30 Jun', 'Pendaftaran', 'Pengambilan formulir dan penyerahan berkas di loket PPDB sekolah.'],
+  ['1 - 5 Jul', 'Verifikasi Berkas', 'Pemeriksaan kelengkapan dokumen administratif oleh panitia.'],
+  ['8 Jul', 'Pengumuman Hasil', 'Diumumkan secara terbuka di sekolah dan website resmi.'],
+  ['9 - 12 Jul', 'Daftar Ulang', 'Konfirmasi ulang berkas bagi calon peserta didik yang diterima.'],
 ] as const
 
 const FALLBACK_SYARAT = [
-  'Fotokopi Kartu Keluarga (KK) — 2 lembar',
-  'Fotokopi Akta Kelahiran — 2 lembar',
+  'Fotokopi Kartu Keluarga (KK), 2 lembar',
+  'Fotokopi Akta Kelahiran, 2 lembar',
   'Pas foto calon siswa ukuran 3x4 (2 lembar)',
   'Usia minimal 6 tahun pada tanggal 1 Juli 2026',
-  'Mengisi formulir pendaftaran yang disediakan panitia',
+  'Mengisi formulir pendaftaran yang disediakan panitia di sekolah',
 ]
 
 export default async function PpdbPage() {
@@ -45,7 +45,7 @@ export default async function PpdbPage() {
     ? faqList
     : [
         {
-          answer: 'Pendaftaran dibuka mulai 1 Juni hingga 30 Juni 2026, langsung di sekolah atau melalui formulir online.',
+          answer: 'Pendaftaran dibuka mulai 1 Juni hingga 30 Juni 2026 langsung di sekretariat sekolah.',
           question: 'Kapan pendaftaran PPDB 2026/2027 dibuka?',
         },
         {
@@ -66,7 +66,7 @@ export default async function PpdbPage() {
     <>
       <section className="page-hero">
         <div className="container">
-          <h1>PPDB {tahunAjaran}</h1>
+          <h1>Penerimaan Peserta Didik Baru (PPDB) {tahunAjaran}</h1>
           <p className="breadcrumb">
             <Link href="/">Beranda</Link> / PPDB
           </p>
@@ -75,37 +75,16 @@ export default async function PpdbPage() {
 
       <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Alur Penerimaan</span>
+          <div className="section-head">
             <h2>Tahapan Pendaftaran</h2>
-          </Reveal>
+          </div>
           <div className="steps reveal-group">
             {steps.map(([num, judul, desc]) => (
-              <Reveal className="step-item" key={judul}>
+              <div className="step-item" key={judul}>
                 <div className="step-num">{num}</div>
                 <h4>{judul}</h4>
                 <p>{desc}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section-alt">
-        <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Jadwal Pelaksanaan</span>
-            <h2>Timeline PPDB</h2>
-          </Reveal>
-          <div className="timeline reveal-group">
-            {timeline.map(([tgl, judul, desc]) => (
-              <Reveal className="timeline-item" key={judul}>
-                <div className="timeline-date">{tgl}</div>
-                <div>
-                  <h4>{judul}</h4>
-                  <p>{desc}</p>
-                </div>
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
@@ -113,40 +92,58 @@ export default async function PpdbPage() {
 
       <section className="section">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Dokumen & Persyaratan</span>
+          <div className="section-head">
+            <h2>Jadwal Pelaksanaan PPDB</h2>
+          </div>
+          <div className="timeline reveal-group">
+            {timeline.map(([tgl, judul, desc]) => (
+              <div className="timeline-item" key={judul}>
+                <div className="timeline-date">{tgl}</div>
+                <div>
+                  <h4>{judul}</h4>
+                  <p>{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
             <h2>Syarat Pendaftaran</h2>
-          </Reveal>
+          </div>
           <ul className="syarat-list reveal-group">
             {syarat.map((s) => (
-              <Reveal as="li" key={s}>
+              <li key={s}>
                 <span className="syarat-icon" aria-hidden="true">
                   <CheckIcon size={18} />
                 </span>
                 <span>{s}</span>
-              </Reveal>
+              </li>
             ))}
           </ul>
-          <Reveal className="center">
-            <div style={{ marginTop: 36 }}>
-              <a className="btn btn-gold btn-lg btn-icon" href="#">
-                <DownloadIcon size={20} />
-                <span>Unduh Formulir Pendaftaran (PDF)</span>
-              </a>
+          <div className="center" style={{ marginTop: 36 }}>
+            <div className="ppdb-help-card">
+              <p>Formulir pendaftaran dan informasi detail dapat diperoleh langsung di kantor sekolah pada jam kerja.</p>
+              <Link className="btn btn-gold btn-lg" href="/kontak">
+                Hubungi Panitia PPDB
+              </Link>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
-      <section className="section section-alt">
+      <section className="section faq-section">
         <div className="container faq-inner">
-          <Reveal className="section-head">
-            <span className="section-label">Tanya Jawab</span>
-            <h2>FAQ PPDB</h2>
-          </Reveal>
+          <div className="section-head">
+            <h2>Tanya Jawab PPDB</h2>
+          </div>
           <Accordion items={faq} />
         </div>
       </section>
     </>
   )
 }
+
