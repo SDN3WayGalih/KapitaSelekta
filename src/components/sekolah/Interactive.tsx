@@ -385,3 +385,41 @@ export function ShareButton({ title }: { title: string }) {
   )
 }
 
+
+/** Observer global: menambahkan class `visible` ke semua elemen `.reveal` saat masuk viewport */
+export function RevealObserver() {
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('visible'))
+      return
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+            io.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12 },
+    )
+
+    const scan = (root: ParentNode) => {
+      root.querySelectorAll('.reveal:not(.visible)').forEach((el) => io.observe(el))
+    }
+    scan(document)
+
+    // Tangkap elemen baru (navigasi halaman, filter tab, dll.)
+    const mo = new MutationObserver(() => scan(document))
+    mo.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      mo.disconnect()
+      io.disconnect()
+    }
+  }, [])
+
+  return null
+}
