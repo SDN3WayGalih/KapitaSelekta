@@ -250,7 +250,7 @@ export function ContactForm() {
   const [success, setSuccess] = useState(false)
 
   return (
-    <div className="contact-form reveal">
+    <Reveal className="contact-form">
       <h3>Kirim Pesan</h3>
       <div className={`form-success${success ? ' show' : ''}`} id="formSuccess">
         Pesan Anda berhasil dikirim. Terima kasih telah menghubungi kami!
@@ -285,6 +285,7 @@ export function ContactForm() {
           Kirim Pesan
         </button>
       </form>
-    </div>
+    </Reveal>
   )
 }
+

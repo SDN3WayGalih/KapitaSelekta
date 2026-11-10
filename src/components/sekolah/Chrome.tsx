@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
+import { Reveal } from './Interactive'
 
 
 const NAV_ITEMS = [
@@ -99,7 +100,7 @@ export function Footer() {
   return (
     <footer className="footer" id="kontak">
       <div className="container footer-inner reveal-group">
-        <div className="footer-col reveal">
+        <Reveal className="footer-col">
           <div className="brand">
             <div className="brand-logo">SWG</div>
             <div className="brand-text">
@@ -108,20 +109,20 @@ export function Footer() {
             </div>
           </div>
           <p>Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.</p>
-        </div>
-        <div className="footer-col reveal">
+        </Reveal>
+        <Reveal className="footer-col">
           <h4>Tautan Cepat</h4>
           <Link href="/profil">Profil Sekolah</Link>
           <Link href="/berita">Berita</Link>
-          <Link href="https://sd.spmblampung.com">PPDB</Link>
+          <Link href="/ppdb">PPDB</Link>
           <Link href="/galeri">Galeri</Link>
-        </div>
-        <div className="footer-col reveal">
+        </Reveal>
+        <Reveal className="footer-col">
           <h4>Kontak</h4>
           <p>
-            Jl. Pendidikan No. 3, Way Galih
+            Jln. Desa nagaria No.Kel, Way Galih
             <br />
-            Kec. Tanjung Bintang, Lampung Selatan
+            Kec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361
           </p>
           <p>
             (0721) 123456
@@ -129,7 +130,7 @@ export function Footer() {
             info@sdn3waygalih.sch.id
           </p>
           <p>Senin – Jumat, 07.00 – 15.00 WIB</p>
-        </div>
+        </Reveal>
       </div>
       <div className="footer-bottom">
         <div className="container">&copy; 2026 SDN 3 Way Galih. Seluruh hak cipta dilindungi.</div>

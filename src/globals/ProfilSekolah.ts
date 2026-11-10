@@ -61,7 +61,7 @@ export const ProfilSekolah: GlobalConfig = {
             {
               name: 'footerAddress',
               type: 'textarea',
-              defaultValue: 'Jl. Pendidikan No. 3, Way Galih\nKec. Tanjung Bintang, Lampung Selatan',
+              defaultValue: 'Jln. Desa nagaria No.Kel, Way Galih\nKec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361',
               label: 'Alamat (Footer)',
             },
             {
