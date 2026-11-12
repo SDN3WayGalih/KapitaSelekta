@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { GalleryGrid, Reveal } from '@/components/sekolah/Interactive'
+import { GalleryGrid } from '@/components/sekolah/Interactive'
 import { getGaleri } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Galeri' }
@@ -25,7 +25,7 @@ export default async function GaleriPage() {
         <div className="container">
           <div className="section-head">
             <h2>Dokumentasi Kegiatan Siswa</h2>
-            <p style={{ color: 'var(--gray)', marginTop: 8 }}>Dokumentasi aktivitas pembelajaran, ekstrakurikuler, dan acara sekolah.</p>
+            <p style={{ color: 'var(--gray)', marginTop: 8 }}>Dokumentasi aktivitas pembelajaran, ekstrakurikuler, dan acara sekolah. Klik foto untuk melihat lebih besar.</p>
           </div>
           {galeri.length > 0 ? (
             <GalleryGrid items={galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))} />
