@@ -154,7 +154,7 @@ async function run() {
         { icon: 'academic', label: 'Guru Bersertifikasi' },
         { icon: 'leaf', label: 'Lingkungan Asri' },
       ],
-      footerAddress: 'Jl. Pendidikan No. 3, Way Galih\nKec. Tanjung Bintang, Lampung Selatan',
+      footerAddress: 'Jln. Desa nagaria No.Kel, Way Galih\nKec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361',
       footerTagline: 'Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.',
       heroBadge: 'Website Resmi',
       heroDescription:

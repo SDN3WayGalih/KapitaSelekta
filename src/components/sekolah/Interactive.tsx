@@ -293,7 +293,7 @@ export function ContactForm() {
   const [success, setSuccess] = useState(false)
 
   return (
-    <div className="contact-form reveal">
+    <Reveal className="contact-form">
       <h3>Kirim Pesan</h3>
       <div
         aria-live="polite"
@@ -333,7 +333,7 @@ export function ContactForm() {
           Kirim Pesan
         </button>
       </form>
-    </div>
+    </Reveal>
   )
 }
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
+import { Reveal } from './Interactive'
 
 
 import { ArrowUpIcon, ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from './Icons'
@@ -123,7 +124,7 @@ export function Footer() {
   return (
     <footer className="footer" id="kontak">
       <div className="container footer-inner reveal-group">
-        <div className="footer-col reveal">
+        <Reveal className="footer-col">
           <div className="brand">
             <div className="brand-logo" aria-hidden="true">SWG</div>
             <div className="brand-text">
@@ -132,8 +133,8 @@ export function Footer() {
             </div>
           </div>
           <p>Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.</p>
-        </div>
-        <div className="footer-col reveal">
+        </Reveal>
+        <Reveal className="footer-col">
           <h4>Tautan Cepat</h4>
           <Link href="/profil">Profil Sekolah</Link>
           <Link href="/program">Program Unggulan</Link>
@@ -143,14 +144,15 @@ export function Footer() {
           </Link>
           <Link href="/galeri">Dokumentasi Galeri</Link>
           <Link href="/kontak">Hubungi Kami</Link>
-        </div>
-        <div className="footer-col reveal">
+        </Reveal>
+        <Reveal className="footer-col">
           <h4>Kontak Sekolah</h4>
           <p className="footer-contact-item">
             <MapPinIcon size={16} className="footer-icon" />
             <span>
-              Jl. Pendidikan No. 3, Way Galih<br />
-              Kec. Tanjung Bintang, Lampung Selatan
+              Jln. Desa nagaria No.Kel, Way Galih
+              <br />
+              Kec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361
             </span>
           </p>
           <p className="footer-contact-item">
@@ -165,7 +167,7 @@ export function Footer() {
             <ClockIcon size={16} className="footer-icon" />
             <span>Senin - Jumat, 07.00 - 15.00 WIB</span>
           </p>
-        </div>
+        </Reveal>
       </div>
       <div className="footer-bottom">
         <div className="container">&copy; 2026 SDN 3 Way Galih. Seluruh hak cipta dilindungi.</div>
