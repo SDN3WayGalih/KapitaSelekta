@@ -5,6 +5,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
+import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 
@@ -46,6 +47,12 @@ export default async function Post({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
+
+  // Redirect to sekolah berita detail page for public view
+  if (!draft && decodedSlug) {
+    redirect('/berita/' + decodedSlug)
+  }
+
   const url = '/posts/' + decodedSlug
   const post = await queryPostBySlug({ slug: decodedSlug })
 

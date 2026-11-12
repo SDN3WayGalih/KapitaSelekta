@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { ArrowRightIcon } from '@/components/sekolah/Icons'
 import { NewsTabs, Reveal } from '@/components/sekolah/Interactive'
 import { getBerita } from '@/utilities/sekolahData'
 
@@ -17,7 +19,7 @@ export default async function BeritaPage() {
         <div className="container">
           <h1>Berita & Kegiatan</h1>
           <p className="breadcrumb">
-            <a href="/">Beranda</a> / Berita & Kegiatan
+            <Link href="/">Beranda</Link> / Berita & Kegiatan
           </p>
         </div>
       </section>
@@ -25,29 +27,30 @@ export default async function BeritaPage() {
       <section className="section">
         <div className="container">
           {featured && (
-            <Reveal className="news-featured">
-              <div className="news-featured-thumb">
+            <div className="news-featured">
+              <div className={`news-featured-thumb ${featured.thumbClass}`}>
                 <span className="news-cat">{featured.categoryLabel}</span>
               </div>
               <div className="news-featured-body">
                 <small>{featured.date}</small>
                 <h3>{featured.title}</h3>
                 <p>{featured.excerpt ?? 'Klik untuk membaca selengkapnya.'}</p>
-                <a className="news-link" href="#">
-                  Baca Selengkapnya &rarr;
-                </a>
+                <Link className="news-link" href={featured.slug ? `/berita/${featured.slug}` : '#'}>
+                  <span>Baca Selengkapnya</span>
+                  <ArrowRightIcon size={16} />
+                </Link>
               </div>
-            </Reveal>
+            </div>
           )}
 
           {rest.length > 0 ? (
             <NewsTabs news={rest} />
           ) : (
-            <Reveal className="center">
+            <div className="center">
               <p style={{ color: 'var(--gray)' }}>
                 Belum ada berita lainnya. Konten dapat ditambahkan melalui admin panel.
               </p>
-            </Reveal>
+            </div>
           )}
         </div>
       </section>

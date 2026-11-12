@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
 import { GalleryGrid, Reveal } from '@/components/sekolah/Interactive'
@@ -15,26 +16,25 @@ export default async function GaleriPage() {
         <div className="container">
           <h1>Galeri Sekolah</h1>
           <p className="breadcrumb">
-            <a href="/">Beranda</a> / Galeri
+            <Link href="/">Beranda</Link> / Galeri
           </p>
         </div>
       </section>
 
       <section className="section gallery-page">
         <div className="container">
-          <Reveal className="section-head">
-            <span className="section-label">Dokumentasi</span>
-            <h2>Momen & Kegiatan</h2>
-            <p style={{ color: 'var(--gray)', marginTop: 10 }}>Klik foto untuk melihat lebih besar.</p>
-          </Reveal>
+          <div className="section-head">
+            <h2>Dokumentasi Kegiatan Siswa</h2>
+            <p style={{ color: 'var(--gray)', marginTop: 8 }}>Dokumentasi aktivitas pembelajaran, ekstrakurikuler, dan acara sekolah.</p>
+          </div>
           {galeri.length > 0 ? (
             <GalleryGrid items={galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))} />
           ) : (
-            <Reveal className="center">
+            <div className="center">
               <p style={{ color: 'var(--gray)' }}>
                 Belum ada foto. Tambahkan melalui menu Galeri di admin panel.
               </p>
-            </Reveal>
+            </div>
           )}
         </div>
       </section>
