@@ -24,7 +24,7 @@ export default async function GaleriPage() {
         <div className="container">
           <Reveal className="section-head">
             <span className="section-label">Dokumentasi</span>
-            <h2>Momen & Kegiatan</h2>
+            <h2>Kegiatan</h2>
             <p style={{ color: 'var(--gray)', marginTop: 10 }}>Klik foto untuk melihat lebih besar.</p>
           </Reveal>
           {galeri.length > 0 ? (
