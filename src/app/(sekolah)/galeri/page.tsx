@@ -24,7 +24,7 @@ export default async function GaleriPage() {
         <div className="container">
           <Reveal className="section-head">
             <span className="section-label">Dokumentasi</span>
-            <h2>Kegiatan</h2>
+            <h2>Aktivitas Sekolah</h2>
             <p style={{ color: 'var(--gray)', marginTop: 10 }}>Klik foto untuk melihat lebih besar.</p>
           </Reveal>
           {galeri.length > 0 ? (
@@ -32,7 +32,7 @@ export default async function GaleriPage() {
           ) : (
             <Reveal className="center">
               <p style={{ color: 'var(--gray)' }}>
-                Belum ada foto. Tambahkan melalui menu Galeri di admin panel.
+                Aktivitas sekolah akan ditampilkan di sini.
               </p>
             </Reveal>
           )}
