@@ -1,10 +1,20 @@
 import type { Metadata } from 'next'
 import React from 'react'
+import { Award, BookOpen, Clock, Landmark, School, Users, type LucideIcon } from 'lucide-react'
 
 import { Reveal } from '@/components/sekolah/Interactive'
 import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
+
+const INFO_ICONS: Record<string, LucideIcon> = {
+  NPSN: School,
+  Status: Landmark,
+  Akreditasi: Award,
+  Kurikulum: BookOpen,
+  'Jumlah Rombel': Users,
+  'Jam Belajar': Clock,
+}
 
 const FALLBACK_MISI = [
   'Menyelenggarakan pembelajaran yang aktif, kreatif, dan menyenangkan.',
@@ -96,12 +106,18 @@ export default async function ProfilPage() {
             </div>
           </Reveal>
           <div className="info-grid reveal-group">
-            {info.map((i) => (
-              <Reveal className="info-item" key={i.label}>
-                <small>{i.label}</small>
-                <strong>{i.value}</strong>
-              </Reveal>
-            ))}
+            {info.map((i) => {
+              const Icon = INFO_ICONS[i.label]
+              return (
+                <Reveal className="info-item" key={i.label}>
+                  <span className="info-label">
+                    {Icon && <Icon aria-hidden="true" size={16} strokeWidth={2} />}
+                    <small>{i.label}</small>
+                  </span>
+                  <strong>{i.value}</strong>
+                </Reveal>
+              )
+            })}
           </div>
         </div>
       </section>
