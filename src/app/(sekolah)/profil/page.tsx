@@ -1,11 +1,22 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
+import { Award, BookOpen, Clock, Landmark, School, Users, type LucideIcon } from 'lucide-react'
 
-import { AcademicCapIcon, BookOpenIcon, SchoolIcon, UserIcon } from '@/components/sekolah/Icons'
+import { SchoolIcon } from '@/components/sekolah/Icons'
+import { Reveal } from '@/components/sekolah/Interactive'
 import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
+
+const INFO_ICONS: Record<string, LucideIcon> = {
+  NPSN: School,
+  Status: Landmark,
+  Akreditasi: Award,
+  Kurikulum: BookOpen,
+  'Jumlah Rombel': Users,
+  'Jam Belajar': Clock,
+}
 
 const FALLBACK_MISI = [
   'Menyelenggarakan pembelajaran yang aktif, kreatif, dan menyenangkan.',
@@ -82,23 +93,31 @@ export default async function ProfilPage() {
 
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <Reveal className="section-head">
             <h2>Sejarah Singkat</h2>
-          </div>
-          <div style={{ maxWidth: 820, margin: '0 auto', color: '#4b5563', fontSize: 16 }}>
-            {sejarah.split('\n\n').map((para) => (
-              <p key={para.slice(0, 20)} style={{ marginBottom: 16 }}>
-                {para}
-              </p>
-            ))}
-          </div>
-          <div className="info-grid reveal-group" style={{ marginTop: 40 }}>
-            {info.map((i) => (
-              <div className="info-item" key={i.label}>
-                <small>{i.label}</small>
-                <strong>{i.value}</strong>
-              </div>
-            ))}
+          </Reveal>
+          <Reveal>
+            <div style={{ maxWidth: 820, margin: '0 auto', color: '#4b5563', fontSize: 16 }}>
+              {sejarah.split('\n\n').map((para) => (
+                <p key={para.slice(0, 20)} style={{ marginBottom: 16 }}>
+                  {para}
+                </p>
+              ))}
+            </div>
+          </Reveal>
+          <div className="info-grid reveal-group">
+            {info.map((i) => {
+              const Icon = INFO_ICONS[i.label]
+              return (
+                <Reveal className="info-item" key={i.label}>
+                  <span className="info-label">
+                    {Icon && <Icon aria-hidden="true" size={16} strokeWidth={2} />}
+                    <small>{i.label}</small>
+                  </span>
+                  <strong>{i.value}</strong>
+                </Reveal>
+              )
+            })}
           </div>
         </div>
       </section>
