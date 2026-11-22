@@ -570,16 +570,36 @@ export const DUMMY_AGENDA_LIST: AgendaItem[] = [
 export async function getAgenda(limit = 6): Promise<AgendaItem[]> {
   try {
     const payload = await getClient()
-    const { docs } = await payload.find({
+    const awalHariIni = new Date()
+    awalHariIni.setHours(0, 0, 0, 0)
+
+    // Agenda mendatang dulu (terdekat di atas). Dulu query ini mengambil agenda paling lama,
+    // jadi agenda baru dari admin tidak pernah muncul begitu sudah ada >= `limit` agenda lama.
+    let { docs } = await payload.find({
       collection: 'agenda',
       draft: false,
       limit,
       overrideAccess: false,
       sort: 'date',
       where: {
-        _status: { equals: 'published' },
+        and: [
+          { _status: { equals: 'published' } },
+          { date: { greater_than_equal: awalHariIni.toISOString() } },
+        ],
       },
     })
+
+    // Belum ada agenda mendatang: tampilkan yang terakhir berlangsung agar seksi tidak kosong.
+    if (docs.length === 0) {
+      ;({ docs } = await payload.find({
+        collection: 'agenda',
+        draft: false,
+        limit,
+        overrideAccess: false,
+        sort: '-date',
+        where: { _status: { equals: 'published' } },
+      }))
+    }
 
     if (docs && docs.length > 0) {
       return docs.map((item) => {

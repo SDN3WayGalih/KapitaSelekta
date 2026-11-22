@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import {
+  revalidateSekolahAfterChange,
+  revalidateSekolahAfterDelete,
+} from '../../hooks/revalidateSekolah'
 
 export const Agenda: CollectionConfig = {
   slug: 'agenda',
@@ -84,12 +88,14 @@ export const Agenda: CollectionConfig = {
       label: 'Tanggal Publikasi',
     },
   ],
+  hooks: {
+    afterChange: [revalidateSekolahAfterChange],
+    afterDelete: [revalidateSekolahAfterDelete],
+  },
   versions: {
-    drafts: {
-      autosave: {
-        interval: 100,
-      },
-    },
+    // Tanpa autosave: dengan autosave, setiap klik "Create New" langsung menyimpan
+    // draft kosong ke database, sehingga daftar penuh entri tanpa judul.
+    drafts: true,
     maxPerDoc: 20,
   },
 }

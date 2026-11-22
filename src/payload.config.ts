@@ -30,13 +30,51 @@ export default buildConfig({
     // menyuntikkan <style> yang berbeda antara server dan client).
     // Lihat: https://github.com/payloadcms/payload/issues/16288
     suppressHydrationWarning: true,
+    meta: {
+      titleSuffix: ' - Admin SDN 3 Way Galih',
+    },
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
+      // Tampilan admin mengikuti TailAdmin (tailadmin.com); gayanya ada di app/(payload)/custom.scss
+      graphics: {
+        Icon: '@/components/admin/Graphics#Icon',
+        Logo: '@/components/admin/Graphics#Logo',
+      },
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+    },
+    dashboard: {
+      widgets: [
+        {
+          slug: 'ringkasan',
+          Component: '@/components/admin/dashboard/Ringkasan',
+          label: 'Ringkasan konten',
+          minWidth: 'medium',
+        },
+        {
+          slug: 'berita-terbaru',
+          Component: '@/components/admin/dashboard/BeritaTerbaru',
+          label: 'Berita terbaru',
+          minWidth: 'medium',
+        },
+        {
+          slug: 'agenda-mendatang',
+          Component: '@/components/admin/dashboard/AgendaMendatang',
+          label: 'Agenda mendatang',
+          minWidth: 'small',
+        },
+        {
+          slug: 'aksi-cepat',
+          Component: '@/components/admin/dashboard/AksiCepat',
+          label: 'Aksi cepat',
+          minWidth: 'medium',
+        },
+      ],
+      defaultLayout: [
+        { widgetSlug: 'ringkasan', width: 'full' },
+        { widgetSlug: 'berita-terbaru', width: 'large' },
+        { widgetSlug: 'agenda-mendatang', width: 'small' },
+        { widgetSlug: 'aksi-cepat', width: 'full' },
+      ],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -72,9 +110,10 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Agenda, Faq, Galeri, Testimoni],
+  // Urutan ini juga urutan menu di sidebar admin: konten sekolah dulu.
+  collections: [Posts, Agenda, Galeri, Faq, Testimoni, Media, Pages, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, ProfilSekolah, Ppdb],
+  globals: [ProfilSekolah, Ppdb, Header, Footer],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

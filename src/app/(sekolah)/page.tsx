@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   title: 'Beranda | SDN 3 Way Galih',
 }
 
+// Perubahan dari admin langsung me-revalidate halaman ini (lihat hooks/revalidateSekolah.ts).
+// Render ulang per jam tetap perlu agar agenda yang tanggalnya sudah lewat ikut turun.
+export const revalidate = 3600
+
 function renderBadgeIcon(label: string) {
   const lower = label.toLowerCase()
   if (lower.includes('akreditasi') || lower.includes('unggul') || lower.includes('prestasi')) return <SchoolIcon size={26} />

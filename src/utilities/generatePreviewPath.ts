@@ -2,7 +2,8 @@ import { PreviewSearchParams } from '@/app/(frontend)/next/preview/route'
 import { PayloadRequest, CollectionSlug } from 'payload'
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  posts: '/posts',
+  // Berita ditampilkan di rute sekolah /berita/[slug], bukan rute template /posts
+  posts: '/berita',
   pages: '',
 }
 
