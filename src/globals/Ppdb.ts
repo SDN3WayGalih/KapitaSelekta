@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access/authenticated'
+import { revalidateSekolahGlobal } from '../hooks/revalidateSekolah'
 
 export const Ppdb: GlobalConfig = {
   slug: 'ppdb',
@@ -12,6 +13,9 @@ export const Ppdb: GlobalConfig = {
   admin: {
     description: 'Informasi penerimaan peserta didik baru yang tampil di halaman PPDB dan beranda.',
     group: 'Konten Sekolah',
+  },
+  hooks: {
+    afterChange: [revalidateSekolahGlobal],
   },
   fields: [
     {
@@ -30,7 +34,8 @@ export const Ppdb: GlobalConfig = {
     {
       name: 'bannerDescription',
       type: 'textarea',
-      defaultValue: 'Daftarkan putra-putri Anda sekarang. Kuota terbatas, pendaftaran gratis dan mudah.',
+      defaultValue:
+        'Daftarkan putra-putri Anda sekarang. Kuota terbatas, pendaftaran gratis dan mudah.',
       label: 'Deskripsi Banner Beranda',
     },
     {

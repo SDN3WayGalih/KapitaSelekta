@@ -10,12 +10,23 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import {
+  revalidateSekolahAfterChange,
+  revalidateSekolahAfterDelete,
+} from '../hooks/revalidateSekolah'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Media',
+    plural: 'Media (foto & file)',
+  },
+  admin: {
+    group: 'Konten Sekolah',
+  },
   folders: true,
   access: {
     create: authenticated,
@@ -39,6 +50,11 @@ export const Media: CollectionConfig = {
       }),
     },
   ],
+  hooks: {
+    // foto galeri/berita yang diganti atau dihapus harus ikut berubah di website
+    afterChange: [revalidateSekolahAfterChange],
+    afterDelete: [revalidateSekolahAfterDelete],
+  },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),

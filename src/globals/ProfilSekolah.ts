@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access/authenticated'
+import { revalidateSekolahGlobal } from '../hooks/revalidateSekolah'
 
 export const ProfilSekolah: GlobalConfig = {
   slug: 'profil-sekolah',
@@ -12,6 +13,9 @@ export const ProfilSekolah: GlobalConfig = {
   admin: {
     description: 'Konten profil sekolah: sambutan, visi-misi, statistik, dan kontak. Tampil di beranda dan halaman profil.',
     group: 'Konten Sekolah',
+  },
+  hooks: {
+    afterChange: [revalidateSekolahGlobal],
   },
   fields: [
     {

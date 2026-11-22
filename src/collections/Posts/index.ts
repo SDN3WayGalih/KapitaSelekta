@@ -55,14 +55,8 @@ export const Posts: CollectionConfig<'posts'> = {
     defaultColumns: ['title', 'postType', 'publishedAt', 'updatedAt'],
     description: 'Berita, prestasi, dan pengumuman sekolah.',
     group: 'Konten Sekolah',
-    livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({
-          slug: data?.slug,
-          collection: 'posts',
-          req,
-        }),
-    },
+    // Live preview dihapus: halaman /berita dirender dari data yang sudah terbit,
+    // jadi live preview hanya menampilkan rute template lama (/posts) dengan desain berbeda.
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
@@ -157,7 +151,8 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'categories',
               type: 'relationship',
               admin: {
-                description: 'Kategori klasik (opsional), gunakan Jenis Berita untuk filter halaman.',
+                description:
+                  'Kategori klasik (opsional), gunakan Jenis Berita untuk filter halaman.',
                 position: 'sidebar',
               },
               hasMany: true,
@@ -257,10 +252,8 @@ export const Posts: CollectionConfig<'posts'> = {
     afterDelete: [revalidateDelete],
   },
   versions: {
+    // Tanpa autosave: autosave menyimpan draft kosong begitu "Create New" diklik.
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
       schedulePublish: true,
     },
     maxPerDoc: 50,
