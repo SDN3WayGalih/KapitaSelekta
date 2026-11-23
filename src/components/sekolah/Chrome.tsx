@@ -34,7 +34,7 @@ export function Topbar() {
           </a>
         </div>
         <a
-          href="https://sd.pmblampung.com"
+          href="https://sd.spmblampung.com"
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-gold btn-sm"

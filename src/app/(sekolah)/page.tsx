@@ -160,7 +160,7 @@ export default async function BerandaPage() {
               <Link className="btn btn-gold" href="/profil">
                 Profil Sekolah
               </Link>
-              <Link className="btn btn-outline-light" href="/ppdb">
+              <Link className="btn btn-outline-light" href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer">
                 Informasi PPDB 2026/2027
               </Link>
             </div>
@@ -223,7 +223,7 @@ export default async function BerandaPage() {
               <h2>Penerimaan Peserta Didik Baru (PPDB)</h2>
               <p>Informasi jadwal tahapan, persyaratan administrasi, dan alur pendaftaran siswa baru.</p>
             </div>
-            <Link className="btn btn-gold btn-lg" href="/ppdb">
+            <Link className="btn btn-gold btn-lg" href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer">
               Pelajari Alur PPDB
             </Link>
           </div>

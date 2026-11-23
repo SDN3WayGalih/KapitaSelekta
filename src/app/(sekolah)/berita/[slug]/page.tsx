@@ -224,7 +224,8 @@ export default async function BeritaDetailPage({ params }: Props) {
               <span className="sidebar-ppdb-tag">Informasi PPDB</span>
               <h4>Penerimaan Peserta Didik Baru</h4>
               <p>SDN 3 Way Galih membuka pendaftaran calon siswa baru tahun ajaran 2026/2027.</p>
-              <Link href="/ppdb" className="btn btn-gold btn-sm">
+              <Link href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-sm">
+
                 Pelajari Alur PPDB
               </Link>
             </div>
