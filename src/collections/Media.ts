@@ -38,11 +38,16 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      //required: true,
+      label: 'Deskripsi Foto',
+      admin: {
+        description:
+          'Jelaskan isi foto dalam satu kalimat, contoh: "Siswa kelas 6 mengikuti upacara bendera". Dibacakan untuk pengunjung tunanetra.',
+      },
     },
     {
       name: 'caption',
       type: 'richText',
+      label: 'Keterangan di Bawah Foto (opsional)',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]

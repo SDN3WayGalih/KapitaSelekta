@@ -15,6 +15,7 @@ export const Footer: GlobalConfig = {
     {
       name: 'navItems',
       type: 'array',
+      label: 'Menu Navigasi',
       fields: [
         link({
           appearances: false,

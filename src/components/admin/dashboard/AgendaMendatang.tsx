@@ -34,8 +34,9 @@ export default async function AgendaMendatang({ req }: WidgetServerProps) {
 
       {docs.length === 0 ? (
         <p className="ta-empty">
-          Tidak ada agenda mendatang.{' '}
-          <a href={`${adminRoute}/collections/agenda/create`}>Tambah agenda</a>
+          Tidak ada agenda mendatang.
+          <br />
+          <a href={`${adminRoute}/collections/agenda/create`}>+ Tambah agenda</a>
         </p>
       ) : (
         <ul className="ta-agenda">

@@ -8,7 +8,7 @@ import { getGaleri } from '@/utilities/sekolahData'
 export const metadata: Metadata = { title: 'Galeri' }
 
 export default async function GaleriPage() {
-  const galeri = await getGaleri(24)
+  const galeri = await getGaleri(100)
 
   return (
     <>
@@ -28,7 +28,7 @@ export default async function GaleriPage() {
             <p style={{ color: 'var(--gray)', marginTop: 8 }}>Dokumentasi aktivitas pembelajaran, ekstrakurikuler, dan acara sekolah. Klik foto untuk melihat lebih besar.</p>
           </div>
           {galeri.length > 0 ? (
-            <GalleryGrid items={galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))} />
+            <GalleryGrid items={galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl, thumbUrl: g.thumbUrl }))} />
           ) : (
             <div className="center">
               <p style={{ color: 'var(--gray)' }}>

@@ -127,13 +127,14 @@ export const Posts: CollectionConfig<'posts'> = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: 'Isi Berita',
         },
         {
           fields: [
             {
               name: 'relatedPosts',
               type: 'relationship',
+              label: 'Berita Terkait',
               admin: {
                 position: 'sidebar',
               },
@@ -159,11 +160,11 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'categories',
             },
           ],
-          label: 'Meta',
+          label: 'Pengaturan Lain',
         },
         {
           name: 'meta',
-          label: 'SEO',
+          label: 'Tampilan di Google',
           fields: [
             OverviewField({
               titlePath: 'meta.title',
@@ -193,6 +194,7 @@ export const Posts: CollectionConfig<'posts'> = {
     {
       name: 'publishedAt',
       type: 'date',
+      label: 'Tanggal Terbit',
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -214,8 +216,10 @@ export const Posts: CollectionConfig<'posts'> = {
     {
       name: 'authors',
       type: 'relationship',
+      label: 'Penulis',
       admin: {
         position: 'sidebar',
+        description: 'Boleh dikosongkan.',
       },
       hasMany: true,
       relationTo: 'users',
@@ -244,7 +248,20 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    slugField({
+      overrides: (field) => {
+        // Kolom alamat berita dibuat otomatis dari judul; admin jarang perlu mengubahnya.
+        const slug = field.fields.find((f) => 'name' in f && f.name === 'slug')
+        if (slug && slug.type === 'text') {
+          slug.label = 'Alamat Berita (otomatis)'
+          slug.admin = {
+            ...slug.admin,
+            description: 'Dibuat otomatis dari judul. Tidak perlu diubah.',
+          }
+        }
+        return field
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidatePost],

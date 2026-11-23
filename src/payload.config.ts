@@ -1,4 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { id } from '@payloadcms/translations/languages/id'
+import { lexicalId } from './i18n/lexicalId'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -26,6 +28,8 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    // Format tanggal Indonesia, mis. "10 November 2026, 14.36"
+    dateFormat: "d MMMM yyyy, HH.mm",
     // Suppress React hydration warnings di admin panel (dev-only, Next 16 + Turbopack
     // menyuntikkan <style> yang berbeda antara server dan client).
     // Lihat: https://github.com/payloadcms/payload/issues/16288
@@ -44,6 +48,12 @@ export default buildConfig({
     },
     dashboard: {
       widgets: [
+        {
+          slug: 'panduan',
+          Component: '@/components/admin/dashboard/Panduan',
+          label: 'Panduan singkat',
+          minWidth: 'large',
+        },
         {
           slug: 'ringkasan',
           Component: '@/components/admin/dashboard/Ringkasan',
@@ -74,6 +84,7 @@ export default buildConfig({
         { widgetSlug: 'berita-terbaru', width: 'large' },
         { widgetSlug: 'agenda-mendatang', width: 'small' },
         { widgetSlug: 'aksi-cepat', width: 'full' },
+        { widgetSlug: 'panduan', width: 'full' },
       ],
     },
     importMap: {
@@ -115,6 +126,47 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   globals: [ProfilSekolah, Ppdb, Header, Footer],
   plugins,
+  // Koleksi folder dibuat Payload setelah plugin berjalan, jadi namanya diatur di sini
+  folders: {
+    collectionOverrides: [
+      ({ collection }) => ({
+        ...collection,
+        labels: { singular: 'Folder', plural: 'Folder' },
+        admin: { ...collection.admin, hideAPIURL: true },
+      }),
+    ],
+  },
+  // Panel admin sepenuhnya berbahasa Indonesia. Beberapa istilah dibuat lebih
+  // gamblang untuk admin sekolah yang tidak terbiasa dengan CMS.
+  i18n: {
+    fallbackLanguage: 'id',
+    supportedLanguages: { id },
+    translations: {
+      id: {
+        general: {
+          payloadSettings: 'Pengaturan Tampilan',
+          untitled: 'Belum ada judul',
+          createNew: 'Tambah Baru',
+          noLabel: '(belum diisi)',
+        },
+        version: {
+          publishChanges: 'Terbitkan ke Website',
+          saveDraft: 'Simpan Draf (belum tampil)',
+          unpublish: 'Sembunyikan dari Website',
+        },
+        upload: {
+          dragAndDropHere: 'atau tarik foto ke sini',
+        },
+        fields: {
+          chooseFromExisting: 'Pilih dari Media',
+        },
+        folder: {
+          browseByFolder: 'Folder Media',
+        },
+        lexical: lexicalId,
+      },
+    },
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

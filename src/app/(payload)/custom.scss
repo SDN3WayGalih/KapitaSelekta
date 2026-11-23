@@ -941,3 +941,420 @@ body {
 .template-minimal .form-submit .btn {
   width: 100%;
 }
+
+/* ================================================================== */
+/* Ramah pengguna awam                                                 */
+/* - Huruf lebih besar dan kontras lebih tegas                         */
+/* - Semua yang bisa diklik berbentuk tombol (tanpa ikon tambahan)     */
+/* - Semua warna lewat token agar mode terang & gelap sama rapinya     */
+/* ================================================================== */
+
+:root {
+  --ak-text: var(--color-base-800);
+  --ak-text-soft: var(--color-base-600);
+  --ak-border: var(--color-base-300);
+  --ak-soft-bg: var(--ta-brand-50);
+  --ak-soft-text: var(--ta-brand-600);
+  --ak-soft-border: var(--ta-brand-300);
+  --ak-danger: #b42318;
+  --ak-danger-border: #fda29b;
+  --ak-danger-bg: #fef3f2;
+}
+
+html[data-theme='dark'] {
+  --ak-text: rgba(255, 255, 255, 0.92);
+  --ak-text-soft: var(--color-base-300);
+  --ak-border: var(--color-base-600);
+  --ak-soft-bg: rgba(70, 95, 255, 0.14);
+  --ak-soft-text: var(--ta-brand-300);
+  --ak-soft-border: rgba(117, 146, 255, 0.5);
+  --ak-danger: #fda29b;
+  --ak-danger-border: rgba(253, 162, 155, 0.5);
+  --ak-danger-bg: rgba(240, 68, 56, 0.12);
+}
+
+@mixin tombol($jenis: outline) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 1;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+
+  @if $jenis == primary {
+    background: var(--ta-brand-500);
+    border: 1.5px solid var(--ta-brand-500);
+    color: #fff;
+
+    &:hover {
+      background: var(--ta-brand-600);
+      border-color: var(--ta-brand-600);
+      color: #fff;
+      text-decoration: none;
+    }
+  } @else {
+    background: var(--ta-surface);
+    border: 1.5px solid var(--ak-border);
+    color: var(--ak-text);
+
+    &:hover {
+      background: var(--ak-soft-bg);
+      border-color: var(--ak-soft-border);
+      color: var(--ak-soft-text);
+      text-decoration: none;
+    }
+  }
+}
+
+/* ---------- Ukuran huruf & kontras ---------- */
+
+// Payload memakai root 13px; 15px memperbesar seluruh panel secara proporsional.
+html {
+  font-size: 15px;
+}
+
+.field-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ak-text);
+}
+
+.field-label .required {
+  color: #f04438;
+  font-weight: 700;
+}
+
+.field-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ak-text-soft);
+}
+
+.field-type input:not([type='checkbox']):not([type='radio']),
+.field-type textarea,
+.react-select .rs__control,
+.search-filter__input {
+  font-size: 16px;
+  min-height: 46px;
+}
+
+/* ---------- Menu samping ---------- */
+
+.nav__link {
+  min-height: 46px;
+  font-size: 16px;
+}
+
+.nav-group__label {
+  font-size: 13px;
+  color: var(--ak-text-soft);
+}
+
+.nav__log-out {
+  @include tombol;
+  width: 100%;
+  border-color: var(--ak-danger-border);
+  color: var(--ak-danger);
+
+  &:hover {
+    background: var(--ak-danger-bg);
+    border-color: var(--ak-danger);
+    color: var(--ak-danger);
+  }
+}
+
+/* ---------- Breadcrumb: tautan halaman sebelumnya jadi tombol kembali ---------- */
+
+.step-nav a:not(.step-nav__home) {
+  @include tombol;
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+
+  &::before {
+    content: '←';
+  }
+}
+
+/* ---------- Halaman daftar ---------- */
+
+.list-create-new-doc__create-new-button.btn {
+  @include tombol(primary);
+
+  &::before {
+    content: '+';
+    font-size: 18px;
+    line-height: 1;
+  }
+}
+
+.list-header__title-and-actions {
+  align-items: center;
+  gap: 16px;
+}
+.list-header__title-actions {
+  align-items: center;
+}
+
+// Tombol kedua di judul daftar (mis. "Unggah Massal") & pilihan tampilan Media
+.list-header__title-actions .btn--style-pill:not(.list-create-new-doc__create-new-button),
+.default-list-view-tabs__button {
+  @include tombol;
+  min-height: 40px;
+  padding: 0 14px;
+}
+.default-list-view-tabs__button--active,
+.default-list-view-tabs__button--active:hover {
+  background: var(--ak-soft-bg);
+  border-color: var(--ak-soft-border);
+  color: var(--ak-soft-text);
+}
+.default-list-view-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.list-controls__toggle-columns,
+.list-controls__toggle-where {
+  @include tombol;
+  min-height: 40px;
+  padding: 0 14px;
+}
+
+// Judul di tabel: teks tebal + tombol kecil "Ubah"
+.cell-title a,
+.cell-filename a,
+.ta-table__title {
+  font-weight: 600;
+  color: var(--ak-text);
+  text-decoration: none;
+
+  &::after {
+    content: 'Ubah';
+    display: inline-block;
+    margin-left: 10px;
+    padding: 3px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--ak-soft-border);
+    background: var(--ak-soft-bg);
+    color: var(--ak-soft-text);
+    font-size: 13px;
+    font-weight: 700;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    color: var(--ak-soft-text);
+    text-decoration: none;
+
+    &::after {
+      background: var(--ta-brand-500);
+      border-color: var(--ta-brand-500);
+      color: #fff;
+    }
+  }
+}
+
+.collection-list .table td,
+.collection-list .table th {
+  font-size: 15px;
+}
+
+.collection-list .table tbody tr:hover td {
+  background: var(--ta-hover);
+}
+
+/* ---------- Formulir ---------- */
+
+.btn:not(.btn--style-pill):not(.btn--size-xsmall) {
+  font-size: 15px;
+  min-height: 42px;
+}
+
+// Tab berbentuk tombol; yang aktif berwarna
+.tabs-field__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 0;
+}
+.tabs-field__tab-button {
+  @include tombol;
+  min-height: 42px;
+
+  &::after {
+    display: none; // garis bawah bawaan
+  }
+}
+.tabs-field__tab-button--active,
+.tabs-field__tab-button--active:hover {
+  background: var(--ta-brand-500);
+  border-color: var(--ta-brand-500);
+  color: #fff;
+}
+
+// Kolom foto: dua tombol dengan teks yang menjelaskan
+.upload__dropzoneContent__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.upload__createNewToggler.btn {
+  @include tombol(primary);
+  font-size: 0; // teks bawaan diganti lewat ::after
+
+  &::after {
+    content: 'Unggah Foto Baru';
+    font-size: 15px;
+  }
+}
+.upload__listToggler.btn {
+  @include tombol;
+  font-size: 0;
+
+  &::after {
+    content: 'Pilih Foto yang Sudah Ada';
+    font-size: 15px;
+  }
+}
+
+// Ciutkan / Tampilkan semua
+.array-field__header-action {
+  @include tombol;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+// "Tambah ..." pada daftar: tombol lebar bergaris putus-putus
+.array-field__add-row.btn {
+  @include tombol;
+  width: 100%;
+  min-height: 50px;
+  border: 2px dashed var(--ak-soft-border);
+  background: var(--ak-soft-bg);
+  color: var(--ak-soft-text);
+  font-size: 16px;
+
+  *,
+  .btn__label {
+    color: inherit;
+    opacity: 1;
+  }
+
+  &:hover {
+    border-style: solid;
+    border-color: var(--ta-brand-500);
+    background: var(--ta-brand-500);
+    color: #fff;
+  }
+}
+
+// Alamat (slug) dibuat otomatis dari judul. Disembunyikan, tetapi tetap ikut tersimpan.
+.slug-field-component {
+  display: none;
+}
+
+// Tab dokumen ("Edit") tidak berguna bila hanya ada satu tab
+.doc-tabs__tabs:not(:has(> :nth-child(2))) {
+  display: none;
+}
+
+/* ---------- Dasbor: widget panduan ---------- */
+
+.ta-panduan__status,
+.ta-panduan__tugas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.ta-panduan__status {
+  margin-bottom: 20px;
+}
+.ta-panduan__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--ta-border);
+  border-radius: 12px;
+  background: var(--ta-page);
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ak-text);
+  }
+}
+.ta-panduan__req {
+  min-width: 46px;
+  color: #f04438;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+.ta-panduan__kartu {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  border: 1px solid var(--ta-border);
+  border-radius: 12px;
+
+  h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: var(--ak-text);
+  }
+
+  ol {
+    margin: 0 0 14px;
+    padding-left: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ak-text);
+  }
+}
+.ta-panduan__link {
+  @include tombol(primary);
+  margin-top: auto;
+  align-self: flex-start;
+}
+.ta-panduan__catatan {
+  margin: 18px 0 0;
+  font-size: 14px;
+  color: var(--ak-text-soft);
+}
+
+.ta-empty a {
+  @include tombol(primary);
+  margin-top: 10px;
+}
+
+@media (max-width: 1100px) {
+  .ta-panduan__status,
+  .ta-panduan__tugas {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Payload menulis judul "Folders"/"Documents" tanpa terjemahan; kartu folder sudah cukup jelas.
+.item-card-grid__title {
+  display: none;
+}

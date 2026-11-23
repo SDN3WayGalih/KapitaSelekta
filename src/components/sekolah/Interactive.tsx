@@ -215,7 +215,12 @@ export function NewsTabs({ news }: { news: NewsItem[] }) {
   )
 }
 
-export type GalleryItem = { caption: string; imageUrl?: string | null }
+export type GalleryItem = {
+  caption: string
+  imageUrl?: string | null
+  /** Versi kecil untuk kotak grid; versi penuh dipakai di pratinjau. */
+  thumbUrl?: string | null
+}
 
 /** Galeri dengan lightbox */
 export function GalleryGrid({ items }: { items: (string | GalleryItem)[] }) {
@@ -246,7 +251,11 @@ export function GalleryGrid({ items }: { items: (string | GalleryItem)[] }) {
             aria-label={`Lihat foto: ${item.caption}`}
           >
             {item.imageUrl ? (
-              <img alt={item.caption} src={item.imageUrl} />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt={item.caption} src={item.thumbUrl ?? item.imageUrl} loading="lazy" />
+                <span className="gallery-caption">{item.caption}</span>
+              </>
             ) : (
               <div className="gallery-placeholder">
                 <ImageIcon size={32} />
@@ -422,4 +431,40 @@ export function RevealObserver() {
   }, [])
 
   return null
+}
+
+/**
+ * Sambutan panjang dipotong setelah beberapa paragraf, dengan tautan
+ * "Baca selengkapnya" agar beranda tidak terlalu panjang (terutama di HP).
+ */
+export function SambutanRingkas({ text, paragrafAwal = 2 }: { text: string; paragrafAwal?: number }) {
+  const [buka, setBuka] = useState(false)
+  const paragraf = text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+  const perluDipotong = paragraf.length > paragrafAwal
+  const tampil = buka || !perluDipotong ? paragraf : paragraf.slice(0, paragrafAwal)
+
+  return (
+    <>
+      <blockquote id="isi-sambutan">
+        {tampil.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+        {!buka && perluDipotong && <span aria-hidden="true">…</span>}
+      </blockquote>
+      {perluDipotong && (
+        <button
+          type="button"
+          className="link-selengkapnya"
+          aria-expanded={buka}
+          aria-controls="isi-sambutan"
+          onClick={() => setBuka((v) => !v)}
+        >
+          {buka ? 'Tutup sambutan' : 'Baca selengkapnya'}
+        </button>
+      )}
+    </>
+  )
 }

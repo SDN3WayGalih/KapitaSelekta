@@ -9,7 +9,7 @@ const BeforeDashboard: React.FC<ServerProps> = ({ user }) => {
   return (
     <div className="ta-page-head">
       <div>
-        <h1 className="ta-page-head__title">Dashboard</h1>
+        <h1 className="ta-page-head__title">Dasbor</h1>
         <p className="ta-page-head__sub">
           {nama ? `Halo, ${nama}. ` : ''}Kelola konten website SDN 3 Way Galih dari sini.
         </p>
