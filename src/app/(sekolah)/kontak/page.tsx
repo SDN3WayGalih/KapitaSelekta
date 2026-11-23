@@ -7,7 +7,9 @@ import { ContactForm, Reveal } from '@/components/sekolah/Interactive'
 
 export const metadata: Metadata = { title: 'Kontak Kami' }
 
-const WA_ADMIN = '6281234567890'
+const WA_ADMIN = '6282159153743'
+
+const WA_MESSAGE = 'Halo, saya ingin bertanya terkait PPDB'
 
 // Alamat lengkap sekolah — dipakai kartu Alamat dan peta Google Maps di bawah.
 const SCHOOL_ADDRESS =
@@ -80,7 +82,7 @@ export default function KontakPage() {
               ))}
               <Link
                 className="contact-card contact-card-link contact-card-wa"
-                href={`https://wa.me/${WA_ADMIN}`}
+                href={`https://wa.me/${WA_ADMIN}?text=${encodeURIComponent(WA_MESSAGE)}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
