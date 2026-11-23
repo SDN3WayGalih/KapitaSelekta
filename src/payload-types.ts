@@ -131,6 +131,7 @@ export interface Config {
   };
   locale: null;
   widgets: {
+    panduan: PanduanWidget;
     ringkasan: RingkasanWidget;
     'berita-terbaru': BeritaTerbaruWidget;
     'agenda-mendatang': AgendaMendatangWidget;
@@ -217,6 +218,9 @@ export interface Post {
    * Tanggal berita diterbitkan.
    */
   publishedAt?: string | null;
+  /**
+   * Boleh dikosongkan.
+   */
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
@@ -228,6 +232,9 @@ export interface Post {
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
+  /**
+   * Dibuat otomatis dari judul. Tidak perlu diubah.
+   */
   slug: string;
   updatedAt: string;
   createdAt: string;
@@ -239,6 +246,9 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  /**
+   * Jelaskan isi foto dalam satu kalimat, contoh: "Siswa kelas 6 mengikuti upacara bendera". Dibacakan untuk pengunjung tunanetra.
+   */
   alt?: string | null;
   caption?: {
     root: {
@@ -353,7 +363,7 @@ export interface FolderInterface {
   createdAt: string;
 }
 /**
- * Kategori berita klasik (opsional). Untuk tab filter halaman Berita gunakan field Jenis Berita di collection Berita.
+ * Pengelompokan berita. Jarang perlu diubah.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
@@ -489,6 +499,8 @@ export interface Testimoni {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Halaman bebas di luar menu utama. Jarang perlu diubah.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -726,6 +738,8 @@ export interface FormBlock {
   blockType: 'formBlock';
 }
 /**
+ * Teknis: susunan formulir di website.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
  */
@@ -891,6 +905,8 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Teknis: mengarahkan alamat lama ke alamat baru.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -917,6 +933,8 @@ export interface Redirect {
   createdAt: string;
 }
 /**
+ * Pesan yang dikirim pengunjung lewat formulir website.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
@@ -934,7 +952,7 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
- * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ * Teknis: diisi otomatis, tidak perlu diubah.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search".
@@ -1820,6 +1838,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface ProfilSekolah {
   id: number;
+  heroImage?: (number | null) | Media;
   heroBadge?: string | null;
   heroTitle: string;
   heroSubtitle?: string | null;
@@ -1828,6 +1847,7 @@ export interface ProfilSekolah {
   topbarEmail?: string | null;
   footerAddress?: string | null;
   footerTagline?: string | null;
+  sambutanPhoto?: (number | null) | Media;
   sambutanQuote?: string | null;
   sambutanName?: string | null;
   sambutanTitle?: string | null;
@@ -1849,7 +1869,11 @@ export interface ProfilSekolah {
   struktur?:
     | {
         name: string;
+        /**
+         * Menentukan posisi di bagan: "Kepala", "Komite", "Guru", "Pelatih"/"Pembina", selain itu masuk kolom staf.
+         */
         position: string;
+        photo?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1979,6 +2003,7 @@ export interface Footer {
  * via the `definition` "profil-sekolah_select".
  */
 export interface ProfilSekolahSelect<T extends boolean = true> {
+  heroImage?: T;
   heroBadge?: T;
   heroTitle?: T;
   heroSubtitle?: T;
@@ -1987,6 +2012,7 @@ export interface ProfilSekolahSelect<T extends boolean = true> {
   topbarEmail?: T;
   footerAddress?: T;
   footerTagline?: T;
+  sambutanPhoto?: T;
   sambutanQuote?: T;
   sambutanName?: T;
   sambutanTitle?: T;
@@ -2010,6 +2036,7 @@ export interface ProfilSekolahSelect<T extends boolean = true> {
     | {
         name?: T;
         position?: T;
+        photo?: T;
         id?: T;
       };
   statItems?:
@@ -2110,6 +2137,16 @@ export interface FooterSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "panduan_widget".
+ */
+export interface PanduanWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'large' | 'x-large' | 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

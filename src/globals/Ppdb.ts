@@ -47,6 +47,10 @@ export const Ppdb: GlobalConfig = {
             {
               name: 'steps',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'title',
@@ -75,6 +79,10 @@ export const Ppdb: GlobalConfig = {
             {
               name: 'timeline',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'date',
@@ -109,6 +117,10 @@ export const Ppdb: GlobalConfig = {
             {
               name: 'requirements',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'requirement',

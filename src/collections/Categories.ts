@@ -21,6 +21,7 @@ export const Categories: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      label: 'Nama Kategori',
       required: true,
     },
     slugField({

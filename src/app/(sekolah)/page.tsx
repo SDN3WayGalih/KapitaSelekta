@@ -13,6 +13,7 @@ import {
   GalleryGrid,
   NewsItem,
   NewsTabs,
+  SambutanRingkas,
 } from '@/components/sekolah/Interactive'
 import {
   getAgenda,
@@ -129,7 +130,7 @@ export default async function BerandaPage() {
   const badges = profil?.badgeItems?.length ? profil.badgeItems : FALLBACK_BADGES
   const newsItems = news.length ? news : FALLBACK_NEWS
   const galleryItems = galeri.length
-    ? galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl }))
+    ? galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl, thumbUrl: g.thumbUrl }))
     : FALLBACK_GALLERY
   const agenda = agendaList.length ? agendaList : FALLBACK_AGENDA
 
@@ -141,8 +142,8 @@ export default async function BerandaPage() {
   const sambutanQuote =
     profil?.sambutanQuote ??
     '"Assalamu\'alaikum warahmatullahi wabarakatuh. Selamat datang di portal resmi SDN 3 Way Galih. Website ini kami hadirkan sebagai sarana informasi resmi seputar kegiatan akademik, program kesiswaan, tata tertib, dan alur penerimaan peserta didik baru bagi seluruh orang tua dan masyarakat."'
-  const sambutanName = 'Kepala Sekolah'
-  const sambutanTitle = 'SDN 3 Way Galih, Tanjung Bintang'
+  const sambutanName = profil?.sambutanName ?? 'Kepala Sekolah'
+  const sambutanTitle = profil?.sambutanTitle ?? 'SDN 3 Way Galih, Tanjung Bintang'
 
   return (
     <>
@@ -167,10 +168,15 @@ export default async function BerandaPage() {
           </div>
           <div className="hero-media">
             <div className="hero-photo-card">
-              <div className="hero-photo-illustration">
-                <SchoolIcon size={64} className="hero-ill-icon" />
-                <span className="hero-photo-label">SDN 3 Way Galih</span>
-              </div>
+              {profil?.heroImageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className="hero-photo-img" src={profil.heroImageUrl} alt={`Gedung ${heroTitle}`} />
+              ) : (
+                <div className="hero-photo-illustration">
+                  <SchoolIcon size={64} className="hero-ill-icon" />
+                  <span className="hero-photo-label">SDN 3 Way Galih</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -194,13 +200,18 @@ export default async function BerandaPage() {
       <section className="sambutan section" id="profil">
         <div className="container sambutan-inner">
           <div className="sambutan-photo">
-            <div className="photo-circle" aria-label="Kepala Sekolah">
-              <SchoolIcon size={56} />
-            </div>
+            {profil?.sambutanPhotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="photo-circle photo-circle-img" src={profil.sambutanPhotoUrl} alt={`Foto ${sambutanName}`} />
+            ) : (
+              <div className="photo-circle" aria-label="Kepala Sekolah">
+                <SchoolIcon size={56} />
+              </div>
+            )}
           </div>
           <div className="sambutan-text">
             <h2>Sambutan Kepala Sekolah</h2>
-            <blockquote>{sambutanQuote}</blockquote>
+            <SambutanRingkas text={sambutanQuote} />
             <p className="sambutan-nama">
               <strong>{sambutanName}</strong>
               <small>{sambutanTitle}</small>

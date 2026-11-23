@@ -3,6 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -22,6 +23,71 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
+
+/** Nama Indonesia + keterangan untuk koleksi teknis (termasuk bawaan plugin). */
+const LABEL_TEKNIS: Record<string, { singular: string; plural: string; description: string }> = {
+  pages: { singular: 'Halaman', plural: 'Halaman Tambahan', description: 'Halaman bebas di luar menu utama. Jarang perlu diubah.' },
+  categories: { singular: 'Kategori', plural: 'Kategori Berita', description: 'Pengelompokan berita. Jarang perlu diubah.' },
+  redirects: { singular: 'Pengalihan', plural: 'Pengalihan Alamat', description: 'Teknis: mengarahkan alamat lama ke alamat baru.' },
+  forms: { singular: 'Formulir', plural: 'Formulir', description: 'Teknis: susunan formulir di website.' },
+  'form-submissions': { singular: 'Kiriman', plural: 'Kiriman Formulir', description: 'Pesan yang dikirim pengunjung lewat formulir website.' },
+  search: { singular: 'Hasil', plural: 'Indeks Pencarian', description: 'Teknis: diisi otomatis, tidak perlu diubah.' },
+}
+
+/** Format tanggal Indonesia di kolom isian, mis. "24 November 2026, 00.55". */
+function formatTanggalIndonesia<T>(fields: T[]): T[] {
+  return fields.map((f) => {
+    const field = f as Record<string, unknown>
+    const salin: Record<string, unknown> = { ...field }
+    if (field.type === 'date') {
+      const admin = (field.admin ?? {}) as { date?: { pickerAppearance?: string; displayFormat?: string } }
+      const tampilan = admin.date?.pickerAppearance
+      if (!admin.date?.displayFormat && tampilan !== 'timeOnly' && tampilan !== 'monthOnly') {
+        salin.admin = {
+          ...admin,
+          date: { ...admin.date, displayFormat: tampilan === 'dayOnly' ? 'd MMMM yyyy' : 'd MMMM yyyy, HH.mm' },
+        }
+      }
+    }
+    if (Array.isArray(field.fields)) salin.fields = formatTanggalIndonesia(field.fields)
+    if (Array.isArray(field.tabs)) {
+      salin.tabs = (field.tabs as Record<string, unknown>[]).map((t) => ({
+        ...t,
+        fields: formatTanggalIndonesia((t.fields as unknown[]) ?? []),
+      }))
+    }
+    return salin as T
+  })
+}
+
+/**
+ * Plugin terakhir: merapikan panel admin agar ramah pengguna awam.
+ * - Menyembunyikan tab "API" (hanya berguna untuk pengembang).
+ * - Memberi nama Indonesia pada koleksi teknis.
+ */
+const ramahAdmin: Plugin = (config) => ({
+  ...config,
+  collections: config.collections?.map((c) => {
+    const label = LABEL_TEKNIS[c.slug]
+    return {
+      ...c,
+      fields: formatTanggalIndonesia(c.fields),
+      ...(label && { labels: { singular: label.singular, plural: label.plural } }),
+      admin: {
+        ...c.admin,
+        hideAPIURL: true,
+        ...(label && { description: label.description }),
+      },
+    }
+  }),
+  globals: config.globals?.map((g) => ({
+    ...g,
+    fields: formatTanggalIndonesia(g.fields),
+    ...(g.slug === 'header' && { label: 'Menu Atas Website' }),
+    ...(g.slug === 'footer' && { label: 'Bagian Bawah Website' }),
+    admin: { ...g.admin, hideAPIURL: true },
+  })),
+})
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
@@ -95,4 +161,28 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  // Foto disimpan di Supabase Storage (S3-compatible) agar bisa diakses dari
+  // semua lingkungan. Tanpa variabel S3_* di .env, upload kembali ke public/media.
+  s3Storage({
+    enabled: Boolean(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID),
+    collections: {
+      media: {
+        // Bucket publik: browser mengambil file langsung dari CDN Supabase.
+        disablePayloadAccessControl: true,
+        generateFileURL: ({ filename, prefix }) =>
+          [process.env.S3_PUBLIC_URL, prefix, filename].filter(Boolean).join('/'),
+      },
+    },
+    bucket: process.env.S3_BUCKET || '',
+    config: {
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+      },
+    },
+  }),
+  ramahAdmin,
 ]

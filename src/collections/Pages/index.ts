@@ -80,11 +80,11 @@ export const Pages: CollectionConfig<'pages'> = {
               },
             },
           ],
-          label: 'Content',
+          label: 'Isi Halaman',
         },
         {
           name: 'meta',
-          label: 'SEO',
+          label: 'Tampilan di Google',
           fields: [
             OverviewField({
               titlePath: 'meta.title',
@@ -114,6 +114,7 @@ export const Pages: CollectionConfig<'pages'> = {
     {
       name: 'publishedAt',
       type: 'date',
+      label: 'Tanggal Terbit',
       admin: {
         position: 'sidebar',
       },

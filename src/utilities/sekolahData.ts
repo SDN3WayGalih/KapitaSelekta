@@ -17,6 +17,7 @@ export type AgendaItem = {
 export type GaleriItem = {
   caption: string
   imageUrl: string | null
+  thumbUrl?: string | null
 }
 
 export type FaqItem = {
@@ -36,11 +37,13 @@ export type ProfilSekolahData = {
   sambutanQuote?: string
   sambutanName?: string
   sambutanTitle?: string
+  sambutanPhotoUrl?: string | null
+  heroImageUrl?: string | null
   visi?: string
   misi?: string[]
   sejarah?: string
   infoItems?: { label: string; value: string }[]
-  struktur?: { name: string; position: string }[]
+  struktur?: { name: string; position: string; photoUrl?: string | null }[]
   statItems?: { value: number; suffix?: string; label: string }[]
   badgeItems?: { icon?: string; label: string }[]
 }
@@ -89,6 +92,18 @@ function formatTanggalPenuh(d: Date | string | null | undefined): string {
 }
 
 /** Wrapper getPayload yang bisa dipanggil dari Server Component */
+type MediaLike = {
+  url?: string | null
+  sizes?: Record<string, { url?: string | null } | undefined> | null
+}
+
+/** URL media (ukuran tertentu bila tersedia), aman untuk relasi yang belum di-populate. */
+function mediaUrl(media: unknown, size?: string): string | null {
+  if (!media || typeof media !== 'object') return null
+  const m = media as MediaLike
+  return (size && m.sizes?.[size]?.url) || m.url || null
+}
+
 async function getClient() {
   return getPayload({ config: configPromise })
 }
@@ -720,7 +735,8 @@ export async function getGaleri(limit = 12): Promise<GaleriItem[]> {
         const image = typeof doc.image === 'object' ? doc.image : null
         return {
           caption: doc.title,
-          imageUrl: image?.url ?? null,
+          imageUrl: mediaUrl(image, 'xlarge'),
+          thumbUrl: mediaUrl(image, 'small'),
         }
       })
     }
@@ -877,13 +893,19 @@ export async function getProfilSekolah(): Promise<ProfilSekolahData | null> {
         sambutanName: global.sambutanName ?? undefined,
         sambutanQuote: global.sambutanQuote ?? undefined,
         sambutanTitle: global.sambutanTitle ?? undefined,
+        sambutanPhotoUrl: mediaUrl(global.sambutanPhoto, 'small'),
+        heroImageUrl: mediaUrl(global.heroImage, 'large'),
         sejarah: global.sejarah ?? undefined,
         statItems: global.statItems?.map((s) => ({
           label: s.label,
           suffix: s.suffix ?? undefined,
           value: s.value,
         })),
-        struktur: global.struktur?.map((s) => ({ name: s.name, position: s.position })),
+        struktur: global.struktur?.map((s) => ({
+          name: s.name,
+          position: s.position,
+          photoUrl: mediaUrl(s.photo, 'small'),
+        })),
         topbarEmail: global.topbarEmail ?? undefined,
         topbarPhone: global.topbarPhone ?? undefined,
         visi: global.visi ?? undefined,

@@ -33,6 +33,8 @@ const nextConfig: NextConfig = {
           protocol: url.protocol.replace(':', '') as 'http' | 'https',
         }
       }),
+      // Foto dari Supabase Storage (lihat s3Storage di src/plugins)
+      { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
     ],
   },
   webpack: (webpackConfig) => {

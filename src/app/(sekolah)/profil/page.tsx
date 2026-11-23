@@ -3,8 +3,13 @@ import Link from 'next/link'
 import React from 'react'
 import { Award, BookOpen, Clock, Landmark, School, Users, type LucideIcon } from 'lucide-react'
 
-import { SchoolIcon } from '@/components/sekolah/Icons'
 import { Reveal } from '@/components/sekolah/Interactive'
+import {
+  DirektoriGuru,
+  FotoPegawai,
+  KartuPegawaiItem,
+  type KartuPegawai,
+} from '@/components/sekolah/DirektoriGuru'
 import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
@@ -36,11 +41,120 @@ const FALLBACK_INFO = [
 ]
 
 const FALLBACK_STRUKTUR = [
-  { jabatan: 'Pimpinan Lembaga', nama: 'Kepala Sekolah' },
-  { jabatan: 'Bidang Kurikulum & Akademik', nama: 'Koordinator Kurikulum' },
-  { jabatan: 'Administrasi & Data Pokok', nama: 'Tata Usaha' },
-  { jabatan: 'Kemitraan & Perwakilan Wali Murid', nama: 'Komite Sekolah' },
+  { jabatan: 'Kepala Sekolah', nama: 'Miftah Danuri Latif, S.Pd.I' },
+  { jabatan: 'Komite Sekolah', nama: 'Joko Sopramono' },
+  { jabatan: 'Bendahara Sekolah', nama: 'Yuli Hartati, S.Pd' },
+  { jabatan: 'Operator Sekolah', nama: 'Baron Aji Wibowo, SE' },
+  { jabatan: 'Penjaga Sekolah', nama: 'Elmiyati' },
+  { jabatan: 'Guru', nama: 'Yuli Hartati, S.Pd' },
+  { jabatan: 'Guru', nama: 'Puji Lestari, S.Pd' },
+  { jabatan: 'Guru', nama: 'Sri Sugiyanti, S.Pd' },
+  { jabatan: 'Guru', nama: 'Tefi Mustika Sari, S.Pd' },
+  { jabatan: 'Guru', nama: 'Mariyatun, S.Pd' },
+  { jabatan: 'Guru', nama: 'Titi Rahmawati, S.Pd' },
+  { jabatan: 'Guru', nama: 'Rita Gestari, S.Pd' },
+  { jabatan: 'Guru', nama: 'Kiki Rezky Armania, S.Pd' },
+  { jabatan: 'Guru', nama: 'Liling Cahyani, S.Pd' },
+  { jabatan: 'Guru', nama: 'Susanto, S.Ag' },
+  { jabatan: 'Guru', nama: 'Baron Aji Wibowo, SE' },
+  { jabatan: 'Guru', nama: 'Wiwin Yusnita, S.Pd.I' },
+  { jabatan: 'Guru', nama: 'Niken Azzahra, S.Pd' },
+  { jabatan: 'Pelatih Pramuka', nama: 'Fadhel' },
+  { jabatan: 'Pelatih Pramuka', nama: 'Femy' },
 ]
+
+type AnggotaStruktur = { jabatan: string; nama: string; foto?: string | null }
+
+/**
+ * Mengelompokkan anggota ke posisi bagan berdasarkan teks jabatan,
+ * sehingga admin cukup mengisi nama + jabatan di panel admin.
+ */
+function susunBagan(list: AnggotaStruktur[]) {
+  // Satu orang bisa punya beberapa baris (mis. Bendahara + Guru); fotonya cukup di salah satu.
+  const fotoPerNama = new Map<string, string>()
+  for (const s of list) if (s.foto && !fotoPerNama.has(s.nama)) fotoPerNama.set(s.nama, s.foto)
+  const lengkap = list.map((s) => ({ ...s, foto: s.foto ?? fotoPerNama.get(s.nama) ?? null }))
+
+  const kepala = lengkap.find((s) => /kepala/i.test(s.jabatan))
+  const komite = lengkap.filter((s) => /komite/i.test(s.jabatan))
+  const pembina = lengkap.filter((s) => /pelatih|pembina/i.test(s.jabatan))
+  const guru = lengkap.filter((s) => s !== kepala && /guru/i.test(s.jabatan))
+  const staf = lengkap.filter(
+    (s) => s !== kepala && !komite.includes(s) && !guru.includes(s) && !pembina.includes(s),
+  )
+  return { kepala, komite, guru, staf, pembina }
+}
+
+function KotakBagan({ anggota, jabatan, className = '' }: { anggota?: AnggotaStruktur; jabatan?: string; className?: string }) {
+  return (
+    <div className={`bagan-box ${className}`}>
+      <div className="bagan-head">{jabatan ?? anggota?.jabatan}</div>
+      {anggota && (
+        <div className="bagan-body">
+          {anggota.foto !== undefined && <FotoPegawai url={anggota.foto} nama={anggota.nama} className="bagan-foto" />}
+          <span>{anggota.nama}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BaganStruktur({ data }: { data: ReturnType<typeof susunBagan> }) {
+  const { kepala, komite, guru, staf } = data
+  return (
+    <div className="bagan" role="group" aria-label="Bagan struktur organisasi sekolah">
+      <div className="bagan-top">
+        <div className="bagan-komite">
+          {komite.map((k) => (
+            <KotakBagan key={k.nama} anggota={k} />
+          ))}
+        </div>
+        {kepala && <KotakBagan className="bagan-kepala" anggota={kepala} />}
+        <div aria-hidden="true" />
+      </div>
+
+      <div className="bagan-mid">
+        <div className="bagan-staf">
+          {staf.map((s) => (
+            <KotakBagan key={`${s.nama}-${s.jabatan}`} anggota={s} />
+          ))}
+        </div>
+        <div className="bagan-spine" aria-hidden="true" />
+        {guru.length > 0 && (
+          <div className="bagan-box bagan-guru">
+            <div className="bagan-head">Dewan Guru</div>
+            <ul>
+              {guru.map((g) => (
+                <li key={g.nama}>{g.nama}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="bagan-bottom">
+        <KotakBagan className="bagan-siswa" jabatan="Peserta Didik" />
+      </div>
+    </div>
+  )
+}
+
+/** Data kartu untuk direktori: guru beserta jabatan tambahannya, lalu tenaga kependidikan & pembina. */
+function susunDirektori({ guru, staf, pembina }: ReturnType<typeof susunBagan>) {
+  const namaGuru = new Set(guru.map((g) => g.nama))
+  const kartuGuru: KartuPegawai[] = guru.map((g) => ({
+    nama: g.nama,
+    peran: g.jabatan,
+    fotoUrl: g.foto,
+    tambahan: staf.filter((s) => s.nama === g.nama).map((s) => s.jabatan),
+  }))
+  const kartuLain: KartuPegawai[] = [...staf.filter((s) => !namaGuru.has(s.nama)), ...pembina].map((s) => ({
+    nama: s.nama,
+    peran: s.jabatan,
+    fotoUrl: s.foto,
+  }))
+  return { kartuGuru, kartuLain }
+}
 
 const FALLBACK_VISI =
   'Terwujudnya peserta didik yang cerdas, berkarakter, berakhlak mulia, dan berwawasan lingkungan.'
@@ -55,8 +169,10 @@ export default async function ProfilPage() {
   const sejarah = profil?.sejarah ?? FALLBACK_SEJARAH
   const info = profil?.infoItems?.length ? profil.infoItems : FALLBACK_INFO
   const struktur = profil?.struktur?.length
-    ? profil.struktur.map((s) => ({ jabatan: s.position, nama: s.name }))
+    ? profil.struktur.map((s) => ({ jabatan: s.position, nama: s.name, foto: s.photoUrl ?? null }))
     : FALLBACK_STRUKTUR
+  const bagan = susunBagan(struktur)
+  const { kartuGuru, kartuLain } = susunDirektori(bagan)
 
   return (
     <>
@@ -127,19 +243,36 @@ export default async function ProfilPage() {
           <div className="section-head">
             <h2>Struktur Organisasi</h2>
           </div>
-          <div className="org-grid reveal-group">
-            {struktur.map((s) => (
-              <div className="org-card" key={s.jabatan}>
-                <div className="org-avatar" aria-hidden="true">
-                  <SchoolIcon size={28} />
-                </div>
-                <strong>{s.nama}</strong>
-                <small>{s.jabatan}</small>
-              </div>
-            ))}
-          </div>
+          <BaganStruktur data={bagan} />
         </div>
       </section>
+
+      {kartuGuru.length > 0 && (
+        <section className="section section-alt" id="dewan-guru">
+          <div className="container">
+            <div className="section-head">
+              <h2>Dewan Guru</h2>
+              <p className="section-subtitle">Pendidik yang mengajar dan membimbing peserta didik UPTD SD Negeri 3 Way Galih.</p>
+            </div>
+            <DirektoriGuru items={kartuGuru} />
+          </div>
+        </section>
+      )}
+
+      {kartuLain.length > 0 && (
+        <section className="section" id="tenaga-kependidikan">
+          <div className="container">
+            <div className="section-head">
+              <h2>Tenaga Kependidikan &amp; Pembina</h2>
+            </div>
+            <div className="pegawai-grid pegawai-grid-kecil">
+              {kartuLain.map((k) => (
+                <KartuPegawaiItem key={`${k.nama}-${k.peran}`} item={k} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }

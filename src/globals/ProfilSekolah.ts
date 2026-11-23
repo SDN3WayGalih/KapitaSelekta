@@ -25,6 +25,12 @@ export const ProfilSekolah: GlobalConfig = {
           label: 'Identitas',
           fields: [
             {
+              name: 'heroImage',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Foto Beranda (gedung sekolah)',
+            },
+            {
               name: 'heroBadge',
               type: 'text',
               defaultValue: 'Selamat Datang di Website Resmi',
@@ -80,6 +86,12 @@ export const ProfilSekolah: GlobalConfig = {
           label: 'Sambutan',
           fields: [
             {
+              name: 'sambutanPhoto',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Foto Kepala Sekolah',
+            },
+            {
               name: 'sambutanQuote',
               type: 'textarea',
               label: 'Isi Sambutan Kepala Sekolah',
@@ -108,10 +120,15 @@ export const ProfilSekolah: GlobalConfig = {
             {
               name: 'misi',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'misiItem',
                   type: 'textarea',
+                  label: 'Poin Misi',
                   required: true,
                 },
               ],
@@ -130,15 +147,21 @@ export const ProfilSekolah: GlobalConfig = {
             {
               name: 'infoItems',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'label',
                   type: 'text',
+                  label: 'Nama Info (contoh: NPSN)',
                   required: true,
                 },
                 {
                   name: 'value',
                   type: 'text',
+                  label: 'Isi',
                   required: true,
                 },
               ],
@@ -146,25 +169,42 @@ export const ProfilSekolah: GlobalConfig = {
                 singular: 'Info',
                 plural: 'Info Sekolah',
               },
+              label: 'Info Sekolah',
             },
             {
               name: 'struktur',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'name',
                   type: 'text',
+                  label: 'Nama Lengkap & Gelar',
                   required: true,
                 },
                 {
                   name: 'position',
                   type: 'text',
+                  label: 'Jabatan',
                   required: true,
+                  admin: {
+                    description:
+                      'Menentukan posisi di bagan: "Kepala", "Komite", "Guru", "Pelatih"/"Pembina", selain itu masuk kolom staf.',
+                  },
+                },
+                {
+                  name: 'photo',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Foto',
                 },
               ],
               label: 'Struktur Sekolah',
               labels: {
-                singular: 'Pejabat',
+                singular: 'Anggota',
                 plural: 'Struktur Organisasi',
               },
             },
@@ -176,15 +216,21 @@ export const ProfilSekolah: GlobalConfig = {
             {
               name: 'statItems',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'value',
                   type: 'number',
+                  label: 'Angka',
                   required: true,
                 },
                 {
                   name: 'suffix',
                   type: 'text',
+                  label: 'Tanda di belakang angka',
                   admin: {
                     description: 'Contoh: + (untuk menampilkan 300+)',
                   },
@@ -192,6 +238,7 @@ export const ProfilSekolah: GlobalConfig = {
                 {
                   name: 'label',
                   type: 'text',
+                  label: 'Keterangan (contoh: Siswa Aktif)',
                   required: true,
                 },
               ],
@@ -204,10 +251,15 @@ export const ProfilSekolah: GlobalConfig = {
             {
               name: 'badgeItems',
               type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
               fields: [
                 {
                   name: 'icon',
                   type: 'text',
+                  label: 'Ikon',
                   admin: {
                     description: 'Emoji atau simbol, contoh: 🏫',
                   },
@@ -215,6 +267,7 @@ export const ProfilSekolah: GlobalConfig = {
                 {
                   name: 'label',
                   type: 'text',
+                  label: 'Teks Badge',
                   required: true,
                 },
               ],
