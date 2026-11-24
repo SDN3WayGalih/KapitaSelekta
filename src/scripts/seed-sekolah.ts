@@ -11,6 +11,7 @@ import 'dotenv/config'
 import { getPayload } from 'payload'
 import configPromise from '../payload.config'
 import { DUMMY_BERITA_DETAIL_LIST } from '../utilities/sekolahData'
+import { INFO_SEKOLAH } from '../utilities/infoSekolah'
 
 async function run() {
   const payload = await getPayload({ config: configPromise })
@@ -161,14 +162,7 @@ async function run() {
         'Mewujudkan lingkungan pendidikan dasar yang aman, disiplin, berakhlak mulia, dan berorientasi pada perkembangan karakter serta potensi setiap peserta didik.',
       heroSubtitle: 'Sekolah Dasar Negeri Tanjung Bintang',
       heroTitle: 'SDN 3 Way Galih',
-      infoItems: [
-        { label: 'NPSN', value: '10801831' },
-        { label: 'Status', value: 'Negeri' },
-        { label: 'Akreditasi', value: 'Peringkat A' },
-        { label: 'Kurikulum', value: 'Kurikulum Merdeka' },
-        { label: 'Jumlah Rombel', value: '12 Rombongan Belajar' },
-        { label: 'Jam Belajar', value: 'Senin - Jumat, 07.00 - 12.30 WIB' },
-      ],
+      infoItems: INFO_SEKOLAH,
       misi: [
         { misiItem: 'Menyelenggarakan pembelajaran yang aktif, kreatif, dan menyenangkan.' },
         { misiItem: 'Menanamkan nilai karakter dan akhlak mulia dalam setiap kegiatan.' },

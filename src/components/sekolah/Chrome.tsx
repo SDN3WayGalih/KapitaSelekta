@@ -74,7 +74,6 @@ export function Navbar() {
     <header className={`navbar${scrolled ? ' scrolled' : ''}`} id="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="brand" aria-label="SDN 3 Way Galih - Beranda">
-          <div className="brand-logo" aria-hidden="true">SWG</div>
           <div className="brand-text">
             <strong>SDN 3 WAY GALIH</strong>
             <small>Sekolah Dasar Negeri</small>
@@ -126,7 +125,6 @@ export function Footer() {
       <div className="container footer-inner reveal-group">
         <Reveal className="footer-col">
           <div className="brand">
-            <div className="brand-logo" aria-hidden="true">SWG</div>
             <div className="brand-text">
               <strong>SDN 3 WAY GALIH</strong>
               <small>Sekolah Dasar Negeri</small>

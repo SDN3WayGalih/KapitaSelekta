@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { ArrowRightIcon } from '@/components/sekolah/Icons'
-import { NewsTabs, Reveal } from '@/components/sekolah/Interactive'
+import { NewsTabs, NewsThumb } from '@/components/sekolah/Interactive'
 import { getBerita } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Berita & Kegiatan' }
@@ -28,9 +28,7 @@ export default async function BeritaPage() {
         <div className="container">
           {featured && (
             <div className="news-featured">
-              <div className={`news-featured-thumb ${featured.thumbClass}`}>
-                <span className="news-cat">{featured.categoryLabel}</span>
-              </div>
+              <NewsThumb className="news-featured-thumb" item={featured} />
               <div className="news-featured-body">
                 <small>{featured.date}</small>
                 <h3>{featured.title}</h3>

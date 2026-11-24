@@ -156,8 +156,23 @@ export type NewsItem = {
   category: 'berita' | 'prestasi' | 'pengumuman'
   categoryLabel: string
   thumbClass: string
+  /** Gambar Utama berita; tanpa gambar dipakai latar gradasi thumbClass. */
+  imageUrl?: string | null
   excerpt?: string
   slug?: string
+}
+
+/** Thumbnail kartu berita: foto bila ada, selain itu latar gradasi. */
+export function NewsThumb({ item, className = 'news-thumb' }: { item: NewsItem; className?: string }) {
+  return (
+    <div className={`${className} ${item.thumbClass}${item.imageUrl ? ' has-photo' : ''}`}>
+      {item.imageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img alt="" className="news-thumb-img" loading="lazy" src={item.imageUrl} />
+      )}
+      <span className="news-cat">{item.categoryLabel}</span>
+    </div>
+  )
 }
 
 /** Grid berita dengan tab filter kategori */
@@ -196,9 +211,7 @@ export function NewsTabs({ news }: { news: NewsItem[] }) {
             data-cat={n.category}
             key={`${n.title}-${n.date}`}
           >
-            <div className={`news-thumb ${n.thumbClass}`}>
-              <span className="news-cat">{n.categoryLabel}</span>
-            </div>
+            <NewsThumb item={n} />
             <div className="news-body">
               <small>{n.date}</small>
               <h3>{n.title}</h3>

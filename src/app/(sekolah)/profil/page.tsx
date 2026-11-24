@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
-import { Award, BookOpen, Clock, Landmark, School, Users, type LucideIcon } from 'lucide-react'
+import { Building2, FileBadge, MapPin, Zap, type LucideIcon } from 'lucide-react'
 
 import { Reveal } from '@/components/sekolah/Interactive'
 import {
@@ -10,17 +10,15 @@ import {
   KartuPegawaiItem,
   type KartuPegawai,
 } from '@/components/sekolah/DirektoriGuru'
-import { getProfilSekolah } from '@/utilities/sekolahData'
+import { getFotoGedung, getProfilSekolah } from '@/utilities/sekolahData'
+import { ALAMAT_SEKOLAH, INFO_SEKOLAH, KELOMPOK_INFO, type KelompokInfo } from '@/utilities/infoSekolah'
 
 export const metadata: Metadata = { title: 'Profil Sekolah' }
 
-const INFO_ICONS: Record<string, LucideIcon> = {
-  NPSN: School,
-  Status: Landmark,
-  Akreditasi: Award,
-  Kurikulum: BookOpen,
-  'Jumlah Rombel': Users,
-  'Jam Belajar': Clock,
+const KELOMPOK_ICONS: Record<KelompokInfo, LucideIcon> = {
+  informasi: Building2,
+  legalitas: FileBadge,
+  sarana: Zap,
 }
 
 const FALLBACK_MISI = [
@@ -29,15 +27,6 @@ const FALLBACK_MISI = [
   'Mengembangkan potensi peserta didik melalui kegiatan ekstrakurikuler.',
   'Mewujudkan lingkungan sekolah yang bersih, hijau, dan sehat.',
   'Menjalin kemitraan yang harmonis dengan orang tua dan masyarakat.',
-]
-
-const FALLBACK_INFO = [
-  { label: 'NPSN', value: '10801831' },
-  { label: 'Status Sekolah', value: 'Negeri' },
-  { label: 'Akreditasi', value: 'Peringkat A' },
-  { label: 'Kurikulum', value: 'Kurikulum Merdeka' },
-  { label: 'Jumlah Rombel', value: '12 Rombongan Belajar' },
-  { label: 'Jam Pelayanan Belajar', value: 'Senin - Jumat, 07.00 - 12.30 WIB' },
 ]
 
 const FALLBACK_STRUKTUR = [
@@ -162,12 +151,19 @@ const FALLBACK_VISI =
 const FALLBACK_SEJARAH = `UPTD SD Negeri 3 Way Galih merupakan salah satu lembaga pendidikan dasar yang berada di wilayah Desa Way Galih, Kecamatan Tanjung Bintang, Kabupaten Lampung Selatan, Provinsi Lampung. Sekolah Dasar Negeri yang berlokasi di Dusun V.b, Desa Way Galih, Kecamatan Tanjung Bintang, Kabupaten Lampung Selatan, Lampung, dengan NPSN 10800130 tercatat berdiri pada 11 Maret 1978 dengan nomor SK pendirian 82.2/023/PS/1978 di bawah pembinaan kementerian pendidikan dan pemerintah daerah. Pernah mewakili Kabupaten Lampung Selatan pada ajang Lomba UKS tingkat Provinsi Lampung.\n\nSekolah ini hadir sebagai salah satu bentuk komitmen dalam menyediakan layanan pendidikan dasar bagi masyarakat, khususnya dalam memberikan kesempatan kepada anak-anak untuk memperoleh pendidikan yang layak, berkualitas, dan berkarakter. Seiring dengan perkembangan zaman, UPTD SD Negeri 3 Way Galih terus berupaya meningkatkan mutu pendidikan, baik dari segi proses pembelajaran, pengembangan kompetensi pendidik dan tenaga kependidikan, penyediaan sarana dan prasarana, maupun pembentukan karakter peserta didik.\n\nDengan semangat kebersamaan dan gotong royong, sekolah terus berbenah dan berinovasi untuk menciptakan lingkungan belajar yang aman, nyaman, inklusif, dan menyenangkan. Pemanfaatan teknologi dalam pembelajaran juga menjadi bagian dari upaya sekolah untuk mengikuti perkembangan pendidikan di era digital. Hingga saat ini, UPTD SD Negeri 3 Way Galih terus berkomitmen menjadi lembaga pendidikan yang mampu mencetak generasi penerus bangsa yang beriman, berakhlak mulia, cerdas, kreatif, mandiri, serta memiliki karakter Profil Pelajar Pancasila.\n\n“Bersama Mewujudkan Pendidikan Bermutu dan Generasi Berprestasi.”`
 
 export default async function ProfilPage() {
-  const profil = await getProfilSekolah()
+  const [profil, fotoGedung] = await Promise.all([getProfilSekolah(), getFotoGedung(8)])
 
   const visi = profil?.visi ?? FALLBACK_VISI
   const misi = profil?.misi?.length ? profil.misi : FALLBACK_MISI
   const sejarah = profil?.sejarah ?? FALLBACK_SEJARAH
-  const info = profil?.infoItems?.length ? profil.infoItems : FALLBACK_INFO
+  const info = profil?.infoItems?.length ? profil.infoItems : INFO_SEKOLAH
+  const cari = (kata: string) => info.find((i) => i.label.toLowerCase().includes(kata))?.value
+  const jenjang = cari('jenjang')?.match(/\(([^)]+)\)/)?.[1] ?? 'SD'
+  const status = cari('status')?.replace(/\s*\(.*\)/, '')
+  const akreditasi = cari('akreditasi')
+  const npsn = cari('npsn')
+  const alamat = profil?.footerAddress || ALAMAT_SEKOLAH
+  const fotoUtama = profil?.heroImageUrl ?? fotoGedung[0]?.thumbUrl ?? null
   const struktur = profil?.struktur?.length
     ? profil.struktur.map((s) => ({ jabatan: s.position, nama: s.name, foto: s.photoUrl ?? null }))
     : FALLBACK_STRUKTUR
@@ -182,6 +178,68 @@ export default async function ProfilPage() {
           <p className="breadcrumb">
             <Link href="/">Beranda</Link> / Profil Sekolah
           </p>
+        </div>
+      </section>
+
+      <section className="section school-profile">
+        <div className="container">
+          <div className="school-card">
+            <div className="school-card-head">
+              {fotoUtama && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img alt="Gedung UPTD SD Negeri 3 Way Galih" className="school-card-photo" src={fotoUtama} />
+              )}
+              <div className="school-card-id">
+                <div className="school-badges">
+                  <span className="sbadge sbadge-navy">{jenjang}</span>
+                  {status && <span className="sbadge sbadge-gray">{status.toUpperCase()}</span>}
+                  {akreditasi && <span className="sbadge sbadge-green">{akreditasi}</span>}
+                  {npsn && <span className="sbadge sbadge-blue">NPSN: {npsn}</span>}
+                </div>
+                <h2>UPTD SD Negeri 3 Way Galih</h2>
+                <p className="school-address">
+                  <MapPin aria-hidden="true" size={15} />
+                  <span>{alamat}</span>
+                </p>
+              </div>
+            </div>
+
+            {KELOMPOK_INFO.map(({ key, judul }) => {
+              const items = info.filter((i) => (i.kelompok ?? 'informasi') === key)
+              if (items.length === 0) return null
+              const Icon = KELOMPOK_ICONS[key]
+              return (
+                <div className="school-group" key={key}>
+                  <h3 className="school-group-title">
+                    <Icon aria-hidden="true" size={18} />
+                    <span>{judul}</span>
+                  </h3>
+                  <div className="info-grid reveal-group">
+                    {items.map((i) => (
+                      <Reveal className="info-item" key={i.label}>
+                        <small>{i.label}</small>
+                        <strong>{i.value}</strong>
+                        {i.catatan && <em>{i.catatan}</em>}
+                      </Reveal>
+                    ))}
+                  </div>
+                  {key === 'sarana' && fotoGedung.length > 0 && (
+                    <div className="school-photos" aria-label="Foto gedung dan fasilitas sekolah">
+                      {fotoGedung.map((f) => (
+                        <figure key={f.caption}>
+                          {f.thumbUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img alt={f.caption} loading="lazy" src={f.thumbUrl} />
+                          )}
+                          <figcaption>{f.caption}</figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
@@ -221,20 +279,6 @@ export default async function ProfilPage() {
               ))}
             </div>
           </Reveal>
-          <div className="info-grid reveal-group">
-            {info.map((i) => {
-              const Icon = INFO_ICONS[i.label]
-              return (
-                <Reveal className="info-item" key={i.label}>
-                  <span className="info-label">
-                    {Icon && <Icon aria-hidden="true" size={16} strokeWidth={2} />}
-                    <small>{i.label}</small>
-                  </span>
-                  <strong>{i.value}</strong>
-                </Reveal>
-              )
-            })}
-          </div>
         </div>
       </section>
 

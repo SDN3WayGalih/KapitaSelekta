@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import type { NewsItem } from '@/components/sekolah/Interactive'
+import { INFO_SEKOLAH, type InfoSekolahItem, type KelompokInfo } from '@/utilities/infoSekolah'
 
 /* ------------------------------------------------------------------ */
 /* Tipe data untuk frontend (semua opsional supaya fallback aman)      */
@@ -42,7 +43,7 @@ export type ProfilSekolahData = {
   visi?: string
   misi?: string[]
   sejarah?: string
-  infoItems?: { label: string; value: string }[]
+  infoItems?: InfoSekolahItem[]
   struktur?: { name: string; position: string; photoUrl?: string | null }[]
   statItems?: { value: number; suffix?: string; label: string }[]
   badgeItems?: { icon?: string; label: string }[]
@@ -122,6 +123,8 @@ export type BeritaDetail = {
   readTime: string
   excerpt: string
   thumbClass: string
+  /** Gambar Utama berita (opsional; tanpa gambar dipakai latar gradasi). */
+  imageUrl?: string | null
   paragraphs: string[]
   subheadings?: { title: string; content: string[] }[]
   keyPoints?: string[]
@@ -407,6 +410,7 @@ export async function getBerita(limit = 9): Promise<NewsItem[]> {
         excerpt: post.excerpt ?? undefined,
         slug: post.slug ?? undefined,
         thumbClass: `thumb-${(i % 3) + 1}`,
+        imageUrl: mediaUrl(post.heroImage, 'medium'),
         title: post.title,
       }))
     }
@@ -478,6 +482,7 @@ export async function getBeritaBySlug(slug: string): Promise<BeritaDetail | null
         readTime: dummy?.readTime || '3 menit baca',
         excerpt: post.excerpt || dummy?.excerpt || '',
         thumbClass: dummy?.thumbClass || 'thumb-1',
+        imageUrl: mediaUrl(post.heroImage, 'large'),
         paragraphs:
           extractedParagraphs.length > 0
             ? extractedParagraphs
@@ -747,6 +752,35 @@ export async function getGaleri(limit = 12): Promise<GaleriItem[]> {
   return DUMMY_GALERI_LIST.slice(0, limit)
 }
 
+/** Foto gedung & fasilitas (kategori galeri "Gedung & Fasilitas") untuk halaman profil. */
+export async function getFotoGedung(limit = 8): Promise<GaleriItem[]> {
+  try {
+    const payload = await getClient()
+    const { docs } = await payload.find({
+      collection: 'galeri',
+      depth: 1,
+      draft: false,
+      limit,
+      overrideAccess: false,
+      sort: 'publishedAt',
+      where: {
+        _status: { equals: 'published' },
+        category: { equals: 'Gedung & Fasilitas' },
+      },
+    })
+    return docs.map((doc) => {
+      const image = typeof doc.image === 'object' ? doc.image : null
+      return {
+        caption: doc.title,
+        imageUrl: mediaUrl(image, 'xlarge'),
+        thumbUrl: mediaUrl(image, 'medium'),
+      }
+    })
+  } catch {
+    return []
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Testimoni                                                           */
 /* ------------------------------------------------------------------ */
@@ -796,14 +830,7 @@ export const DUMMY_PROFIL_SEKOLAH: ProfilSekolahData = {
     'Mewujudkan lingkungan pendidikan dasar yang aman, disiplin, berakhlak mulia, dan berorientasi pada perkembangan karakter serta potensi setiap peserta didik.',
   heroSubtitle: 'Sekolah Dasar Negeri Tanjung Bintang',
   heroTitle: 'SDN 3 Way Galih',
-  infoItems: [
-    { label: 'NPSN', value: '10801831' },
-    { label: 'Status', value: 'Negeri' },
-    { label: 'Akreditasi', value: 'Peringkat A' },
-    { label: 'Kurikulum', value: 'Kurikulum Merdeka' },
-    { label: 'Jumlah Rombel', value: '12 Rombongan Belajar' },
-    { label: 'Jam Belajar', value: 'Senin - Jumat, 07.00 - 12.30 WIB' },
-  ],
+  infoItems: INFO_SEKOLAH,
   misi: [
     'Menyelenggarakan pembelajaran yang aktif, kreatif, dan menyenangkan.',
     'Menanamkan nilai karakter dan akhlak mulia dalam setiap kegiatan.',
@@ -887,7 +914,12 @@ export async function getProfilSekolah(): Promise<ProfilSekolahData | null> {
         heroDescription: global.heroDescription ?? undefined,
         heroSubtitle: global.heroSubtitle ?? undefined,
         heroTitle: global.heroTitle ?? undefined,
-        infoItems: global.infoItems?.map((i) => ({ label: i.label, value: i.value })),
+        infoItems: global.infoItems?.map((i) => ({
+          label: i.label,
+          value: i.value,
+          kelompok: (i.kelompok ?? 'informasi') as KelompokInfo,
+          catatan: i.catatan ?? undefined,
+        })),
         misi: global.misi?.map((m) => m.misiItem),
         sambutanName: global.sambutanName ?? undefined,
         sambutanQuote: global.sambutanQuote ?? undefined,

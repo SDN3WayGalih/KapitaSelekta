@@ -1863,6 +1863,8 @@ export interface ProfilSekolah {
     | {
         label: string;
         value: string;
+        kelompok?: ('informasi' | 'legalitas' | 'sarana') | null;
+        catatan?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2029,6 +2031,8 @@ export interface ProfilSekolahSelect<T extends boolean = true> {
     | {
         label?: T;
         value?: T;
+        kelompok?: T;
+        catatan?: T;
         id?: T;
       };
   struktur?:
