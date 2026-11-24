@@ -1,41 +1,38 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import { login } from '../helpers/login'
 import { seedTestUser, cleanupTestUser, testUser } from '../helpers/seedUser'
 
-test.describe('Admin Panel', () => {
-  let page: Page
-
-  test.beforeAll(async ({ browser }, testInfo) => {
+test.describe('Admin panel — end-to-end', () => {
+  test.beforeEach(async () => {
     await seedTestUser()
-
-    const context = await browser.newContext()
-    page = await context.newPage()
-
-    await login({ page, user: testUser })
   })
 
-  test.afterAll(async () => {
+  test.afterEach(async () => {
     await cleanupTestUser()
   })
 
-  test('can navigate to dashboard', async () => {
-    await page.goto('http://localhost:3000/admin')
-    await expect(page).toHaveURL('http://localhost:3000/admin')
-    const dashboardArtifact = page.locator('span[title="Dashboard"]').first()
-    await expect(dashboardArtifact).toBeVisible()
+  test('login lalu tampilkan dashboard', async ({ page }) => {
+    await login({ page, user: testUser })
+    await expect(page).toHaveURL(/\/admin(?:\/)?$/)
+    await expect(page.locator('body')).toContainText(/Dashboard/i)
   })
 
-  test('can navigate to list view', async () => {
-    await page.goto('http://localhost:3000/admin/collections/users')
-    await expect(page).toHaveURL('http://localhost:3000/admin/collections/users')
-    const listViewArtifact = page.locator('h1', { hasText: 'Users' }).first()
-    await expect(listViewArtifact).toBeVisible()
+  test('menu koleksi konten sekolah dapat dibuka', async ({ page }) => {
+    await login({ page, user: testUser })
+    for (const [slug, heading] of [
+      ['agenda', 'Agenda'],
+      ['faq', 'FAQ'],
+      ['galeri', 'Galeri'],
+      ['testimoni', 'Testimoni'],
+    ]) {
+      await page.goto(`/admin/collections/${slug}`)
+      await expect(page.locator('h1').first(), `heading koleksi ${slug}`).toContainText(heading)
+    }
   })
 
-  test('can navigate to edit view', async () => {
-    await page.goto('http://localhost:3000/admin/collections/pages/create')
-    await expect(page).toHaveURL(/\/admin\/collections\/pages\/[a-zA-Z0-9-_]+/)
-    const editViewArtifact = page.locator('input[name="title"]')
-    await expect(editViewArtifact).toBeVisible()
+  test('halaman edit profil global dapat dibuka', async ({ page }) => {
+    await login({ page, user: testUser })
+    await page.goto('/admin/globals/profil-sekolah')
+    await expect(page.locator('h1').first()).toContainText(/Profil Sekolah/i)
   })
 })

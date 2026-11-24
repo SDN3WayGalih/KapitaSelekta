@@ -1,13 +1,14 @@
 import type { GlobalConfig } from 'payload'
 
 import { authenticated } from '../access/authenticated'
+import { anyone } from '../access/anyone'
 import { revalidateSekolahGlobal } from '../hooks/revalidateSekolah'
 
 export const Ppdb: GlobalConfig = {
   slug: 'ppdb',
   label: 'PPDB',
   access: {
-    read: authenticated,
+    read: anyone,
     update: authenticated,
   },
   admin: {

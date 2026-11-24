@@ -1,39 +1,37 @@
 import { getPayload } from 'payload'
-import config from '../../src/payload.config.js'
 
-export const testUser = {
-  email: 'dev@payloadcms.com',
-  password: 'test',
-}
+import config from '../../src/payload.config'
 
 /**
- * Seeds a test user for e2e admin tests.
+ * User sementara untuk pengujian admin.
+ * Email memakai suffix unik per proses agar tidak bentrok dengan akun asli sekolah.
  */
+const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+
+export const testUser = {
+  email: `e2e-test-${runId}@example.com`,
+  password: 'E2eTestPassword123!',
+  name: 'E2E Test User',
+}
+
+async function getDefaultPayload() {
+  const payloadConfig = await config
+  return getPayload({ config: payloadConfig })
+}
+
+/** Membuat user sementara agar pengujian login admin bisa berjalan. */
 export async function seedTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+  const payload = await getDefaultPayload()
 
-  // Delete existing test user if any
-  await payload.delete({
-    collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
-
-  // Create fresh test user
   await payload.create({
     collection: 'users',
     data: testUser,
   })
 }
 
-/**
- * Cleans up test user after tests
- */
+/** Menghapus user sementara setelah pengujian selesai. */
 export async function cleanupTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+  const payload = await getDefaultPayload()
 
   await payload.delete({
     collection: 'users',
