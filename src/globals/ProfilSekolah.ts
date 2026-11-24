@@ -164,6 +164,22 @@ export const ProfilSekolah: GlobalConfig = {
                   label: 'Isi',
                   required: true,
                 },
+                {
+                  name: 'kelompok',
+                  type: 'select',
+                  label: 'Tampil di bagian',
+                  defaultValue: 'informasi',
+                  options: [
+                    { label: 'Informasi & Profil Sekolah', value: 'informasi' },
+                    { label: 'Legalitas & Perizinan', value: 'legalitas' },
+                    { label: 'Sarana & Fasilitas', value: 'sarana' },
+                  ],
+                },
+                {
+                  name: 'catatan',
+                  type: 'text',
+                  label: 'Keterangan kecil (boleh kosong, contoh: tanggal SK)',
+                },
               ],
               labels: {
                 singular: 'Info',

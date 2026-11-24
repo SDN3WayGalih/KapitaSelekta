@@ -254,6 +254,9 @@ export const Posts: CollectionConfig<'posts'> = {
         const slug = field.fields.find((f) => 'name' in f && f.name === 'slug')
         if (slug && slug.type === 'text') {
           slug.label = 'Alamat Berita (otomatis)'
+          // Kolom ini disembunyikan, jadi tidak pernah terisi dari browser. Slug dibuat server
+          // dari judul (hook generateSlug) sebelum disimpan; tanpa ini form menolak "Terbitkan".
+          slug.validate = () => true as const
           slug.admin = {
             ...slug.admin,
             description: 'Dibuat otomatis dari judul. Tidak perlu diubah.',

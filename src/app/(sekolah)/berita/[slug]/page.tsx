@@ -16,7 +16,7 @@ import {
   TagIcon,
   UserIcon,
 } from '@/components/sekolah/Icons'
-import { Reveal, ShareButton } from '@/components/sekolah/Interactive'
+import { NewsThumb, Reveal, ShareButton } from '@/components/sekolah/Interactive'
 import {
   getAllBeritaSlugs,
   getBeritaBySlug,
@@ -115,12 +115,19 @@ export default async function BeritaDetailPage({ params }: Props) {
           {/* Kolom Utama Artikel */}
           <article className="article-content-wrapper">
             {/* Visual Header Banner */}
-            <div className={`article-visual-card ${detail.thumbClass}`}>
-              <div className="article-visual-overlay">
-                <SchoolIcon size={64} className="article-visual-icon" />
-                <span className="article-visual-badge">Publikasi Resmi SDN 3 Way Galih</span>
+            {detail.imageUrl ? (
+              <figure className="article-visual-card article-visual-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img alt={detail.title} src={detail.imageUrl} />
+              </figure>
+            ) : (
+              <div className={`article-visual-card ${detail.thumbClass}`}>
+                <div className="article-visual-overlay">
+                  <SchoolIcon size={64} className="article-visual-icon" />
+                  <span className="article-visual-badge">Publikasi Resmi SDN 3 Way Galih</span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Paragraf Lead / Ringkasan */}
             {detail.excerpt && (
@@ -265,9 +272,7 @@ export default async function BeritaDetailPage({ params }: Props) {
           <div className="news-grid">
             {relatedNews.map((n) => (
               <Reveal key={n.slug} className="news-card">
-                <div className={`news-thumb ${n.thumbClass}`}>
-                  <span className="news-cat">{n.categoryLabel}</span>
-                </div>
+                <NewsThumb item={n} />
                 <div className="news-body">
                   <small>{n.date}</small>
                   <h3>{n.title}</h3>

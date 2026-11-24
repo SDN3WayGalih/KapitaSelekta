@@ -2,13 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import {
-  AcademicCapIcon,
-  LeafIcon,
-  SchoolIcon,
-  ShieldCheckIcon,
-  UserIcon,
-} from '@/components/sekolah/Icons'
+import { Award, BadgeCheck, Leaf, Rocket, ShieldCheck, Star } from 'lucide-react'
+
+import { SchoolIcon, UserIcon } from '@/components/sekolah/Icons'
 import {
   GalleryGrid,
   NewsItem,
@@ -30,13 +26,17 @@ export const metadata: Metadata = {
 // Render ulang per jam tetap perlu agar agenda yang tanggalnya sudah lewat ikut turun.
 export const revalidate = 3600
 
+/** Ikon lencana dipilih dari kata kunci di teks, sehingga admin cukup menulis teksnya. */
 function renderBadgeIcon(label: string) {
-  const lower = label.toLowerCase()
-  if (lower.includes('akreditasi') || lower.includes('unggul') || lower.includes('prestasi')) return <SchoolIcon size={26} />
-  if (lower.includes('bullying') || lower.includes('aman') || lower.includes('ramah')) return <ShieldCheckIcon size={26} />
-  if (lower.includes('guru') || lower.includes('sertifikasi') || lower.includes('didik')) return <AcademicCapIcon size={26} />
-  if (lower.includes('asri') || lower.includes('lingkungan') || lower.includes('adiwiyata')) return <LeafIcon size={26} />
-  return <SchoolIcon size={26} />
+  const t = label.toLowerCase()
+  const has = (...kata: string[]) => kata.some((k) => t.includes(k))
+  const props = { 'aria-hidden': true, size: 26, strokeWidth: 1.9 } as const
+  if (has('akreditasi', 'unggul', 'prestasi', 'juara')) return <Award {...props} />
+  if (has('penggerak', 'inovasi', 'merdeka')) return <Rocket {...props} />
+  if (has('bullying', 'perundungan', 'aman', 'ramah')) return <ShieldCheck {...props} />
+  if (has('guru', 'sertifikasi', 'didik', 'tenaga')) return <BadgeCheck {...props} />
+  if (has('asri', 'lingkungan', 'adiwiyata', 'hijau')) return <Leaf {...props} />
+  return <Star {...props} />
 }
 
 const FALLBACK_BADGES = [
@@ -149,8 +149,11 @@ export default async function BerandaPage() {
     <>
       {/* Hero Section */}
       <section className="hero" id="beranda">
-        <div className="hero-bg" />
-        <div className="container hero-inner">
+        <div
+          className={`hero-bg${profil?.heroImageUrl ? ' has-photo' : ''}`}
+          style={profil?.heroImageUrl ? ({ '--hero-photo': `url("${profil.heroImageUrl}")` } as React.CSSProperties) : undefined}
+        />
+        <div className={`container hero-inner${profil?.heroImageUrl ? ' hero-inner-solo' : ''}`}>
           <div className="hero-text">
             <h1 className="hero-heading">
               {heroTitle}
@@ -166,19 +169,16 @@ export default async function BerandaPage() {
               </Link>
             </div>
           </div>
-          <div className="hero-media">
-            <div className="hero-photo-card">
-              {profil?.heroImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img className="hero-photo-img" src={profil.heroImageUrl} alt={`Gedung ${heroTitle}`} />
-              ) : (
+          {!profil?.heroImageUrl && (
+            <div className="hero-media">
+              <div className="hero-photo-card">
                 <div className="hero-photo-illustration">
                   <SchoolIcon size={64} className="hero-ill-icon" />
                   <span className="hero-photo-label">SDN 3 Way Galih</span>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 

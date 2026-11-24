@@ -106,13 +106,6 @@ a { text-decoration: none; color: inherit; }
 .navbar.scrolled { box-shadow: 0 4px 18px rgba(22, 38, 92, 0.08); }
 .navbar-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand-logo {
-  width: 44px; height: 44px; border-radius: 10px;
-  background: var(--navy);
-  color: var(--gold); font-weight: 800; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid rgba(245, 179, 1, 0.3);
-}
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-text strong { color: var(--navy); font-size: 16.5px; letter-spacing: 0.5px; }
 .brand-text small { color: var(--gray); font-size: 11px; }
@@ -482,6 +475,68 @@ a { text-decoration: none; color: inherit; }
 .info-item small { color: var(--gray); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
 .info-item strong { display: block; color: var(--navy); font-size: 16px; margin-top: 4px; }
 
+/* Profil: kartu identitas sekolah */
+.school-profile { padding-bottom: 20px; }
+.school-card {
+  background: #fff; border-radius: 20px; padding: 36px;
+  border: 1px solid rgba(22, 38, 92, 0.08); box-shadow: var(--shadow);
+}
+.school-card-head {
+  display: flex; gap: 24px; align-items: center;
+  padding-bottom: 28px; border-bottom: 1px solid rgba(22, 38, 92, 0.1);
+}
+.school-card-photo {
+  width: 168px; height: 112px; flex: none; object-fit: cover;
+  border-radius: 14px; border: 1px solid rgba(22, 38, 92, 0.1);
+}
+.school-card-id { min-width: 0; }
+.school-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.sbadge { font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 6px; letter-spacing: 0.3px; }
+.sbadge-navy { background: var(--navy); color: #fff; }
+.sbadge-gray { background: #eef0f6; color: #4b5563; }
+.sbadge-green { background: #d6f5e6; color: #0b6b44; }
+.sbadge-blue { background: #e4ecff; color: #1d3f9e; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.school-card-id h2 { color: var(--navy); font-size: 32px; line-height: 1.2; margin: 0 0 8px; }
+.school-address { display: flex; align-items: flex-start; gap: 8px; color: var(--gray); font-size: 14.5px; margin: 0; }
+.school-address svg { flex: none; margin-top: 3px; color: #e5484d; }
+.school-group { padding-top: 28px; }
+.school-group + .school-group { margin-top: 28px; border-top: 1px solid rgba(22, 38, 92, 0.1); }
+.school-group-title {
+  display: flex; align-items: center; gap: 10px; margin: 0;
+  color: var(--navy); font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+}
+.school-group-title svg { color: var(--navy); }
+.school-card .info-grid { margin-top: 18px; gap: 14px; }
+.school-card .info-item {
+  border-left: 0; border: 1px solid rgba(22, 38, 92, 0.08); background: #fafbfd;
+  box-shadow: none; padding: 16px 18px;
+}
+.school-card .info-item small { display: block; text-transform: none; letter-spacing: 0; font-size: 13px; }
+.school-card .info-item strong { font-size: 15px; margin-top: 6px; overflow-wrap: anywhere; }
+.school-card .info-item em { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--gray); }
+.school-photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+.school-photos figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; background: #e9edf7; }
+.school-photos img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+.school-photos figure:hover img { transform: scale(1.05); }
+.school-photos figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px;
+  color: #fff; font-size: 12px; font-weight: 600;
+  background: linear-gradient(to top, rgba(10, 16, 40, 0.75), rgba(10, 16, 40, 0));
+}
+@media (max-width: 992px) {
+  .school-photos { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+  .school-card { padding: 22px 18px; border-radius: 16px; }
+  .school-card-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .school-card-photo { width: 100%; height: 170px; }
+  .school-card-id h2 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .school-photos img { transition: none; }
+  .school-photos figure:hover img { transform: none; }
+}
+
 /* Struktur organisasi (bagan) */
 .bagan {
   --bagan-line: var(--navy);
@@ -661,6 +716,28 @@ a { text-decoration: none; color: inherit; }
 .news-featured-body small { color: var(--gray); }
 .news-featured-body h3 { color: var(--navy); font-size: 26px; margin: 10px 0 14px; line-height: 1.35; }
 .news-featured-body p { color: var(--gray); margin-bottom: 20px; }
+
+/* Berita: foto Gambar Utama di kartu & featured */
+.news-thumb, .news-featured-thumb { position: relative; overflow: hidden; }
+.news-thumb-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; transition: transform 0.5s ease;
+}
+.has-photo::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(10, 16, 40, 0.55), rgba(10, 16, 40, 0) 55%);
+}
+.has-photo .news-cat { position: relative; z-index: 1; }
+.news-card:hover .news-thumb-img,
+.news-featured:hover .news-thumb-img { transform: scale(1.04); }
+
+/* Detail berita: foto utama */
+.article-visual-photo { height: auto; max-height: 520px; margin: 0 0 32px; box-shadow: none; background: #0a1028; }
+.article-visual-photo img { width: 100%; height: 100%; max-height: 520px; object-fit: cover; display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .news-thumb-img { transition: none; }
+  .news-card:hover .news-thumb-img, .news-featured:hover .news-thumb-img { transform: none; }
+}
 
 /* Lightbox */
 .lightbox {
@@ -1471,6 +1548,11 @@ textarea:focus-visible {
   .article-visual-card {
     height: 220px;
   }
+  .article-visual-photo,
+  .article-visual-photo img {
+    height: auto;
+    max-height: 380px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -1502,8 +1584,15 @@ textarea:focus-visible {
 
 
 /* Foto asli (dari Media) menggantikan ilustrasi placeholder */
-.hero-photo-card:has(.hero-photo-img) { padding: 0; overflow: hidden; }
-.hero-photo-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Hero dengan foto latar: gradasi navy dari kiri (teks) memudar ke kanan, plus pudar ke bawah */
+.hero-bg.has-photo {
+  background:
+    linear-gradient(to top, rgba(10, 16, 40, 0.55), rgba(10, 16, 40, 0) 38%),
+    linear-gradient(90deg, rgba(10, 16, 40, 0.94) 0%, rgba(22, 38, 92, 0.84) 42%, rgba(22, 38, 92, 0.5) 100%),
+    var(--hero-photo) center 62% / cover no-repeat;
+}
+.hero-inner-solo { grid-template-columns: 1fr; min-height: 520px; align-content: center; }
+.hero-inner-solo .hero-desc { max-width: 560px; }
 .photo-circle-img { object-fit: cover; object-position: 50% 12%; display: block; }
 
 /* Sambutan: paragraf terpisah + tautan "Baca selengkapnya" */
