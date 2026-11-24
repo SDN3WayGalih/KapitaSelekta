@@ -7,7 +7,8 @@ import React from 'react'
 
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
-import { BackToTop, Footer, Navbar, Topbar } from '@/components/sekolah/Chrome'
+import { BackToTop, FooterContent, Navbar, TopbarContent } from '@/components/sekolah/Chrome'
+import { getProfilSekolah } from '@/utilities/sekolahData'
 import { RevealObserver } from '@/components/sekolah/Interactive'
 
 import './sekolah.css'
@@ -20,7 +21,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SekolahRootLayout({ children }: { children: React.ReactNode }) {
+export default async function SekolahRootLayout({ children }: { children: React.ReactNode }) {
+  const profil = await getProfilSekolah()
+
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="id" suppressHydrationWarning>
       <head>
@@ -30,10 +33,10 @@ export default function SekolahRootLayout({ children }: { children: React.ReactN
       </head>
       <body>
         <Providers>
-          <Topbar />
-          <Navbar />
+          <TopbarContent profil={profil} />
+          <Navbar ppdbUrl={profil?.ppdbUrl ?? 'https://sd.spmblampung.com'} />
           <main>{children}</main>
-          <Footer />
+          <FooterContent profil={profil} />
           <BackToTop />
           <RevealObserver />
         </Providers>

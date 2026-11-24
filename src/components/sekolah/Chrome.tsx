@@ -3,51 +3,56 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import type { ProfilSekolahData } from '@/utilities/sekolahData'
 import { ArrowUpRight } from 'lucide-react'
 import { Reveal } from './Interactive'
 
 
 import { ArrowUpIcon, ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from './Icons'
 
-const NAV_ITEMS = [
-  { href: '/', label: 'Beranda' },
-  { href: '/profil', label: 'Profil' },
-  { href: '/program', label: 'Program' },
-  { href: '/berita', label: 'Berita' },
-  { href: '/galeri', label: 'Galeri' },
-  { href: 'https://sd.spmblampung.com', label: 'PPDB', external: true},
-  { href: '/kontak', label: 'Kontak' },
-]
+export function TopbarContent({ profil }: { profil: ProfilSekolahData | null }) {
+  const phone = profil?.topbarPhone ?? '(0721) 123456'
+  const email = profil?.topbarEmail ?? 'info@sdn3waygalih.sch.id'
+  const ppdbUrl = profil?.ppdbUrl ?? 'https://sd.spmblampung.com'
+  const academicYear = new Date().getFullYear()
 
-export function Topbar() {
   return (
     <aside aria-label="Informasi kontak cepat" className="topbar">
       <div className="container topbar-inner">
         <div className="topbar-contact">
-          <a href="tel:0721123456" className="topbar-link">
+          <a href={`tel:${phone.replace(/[^+\\d]/g, '')}`} className="topbar-link">
             <PhoneIcon size={14} />
-            <span>(0721) 123456</span>
+            <span>{phone}</span>
           </a>
-          <a href="mailto:info@sdn3waygalih.sch.id" className="topbar-link">
+          <a href={`mailto:${email}`} className="topbar-link">
             <MailIcon size={14} />
-            <span>info@sdn3waygalih.sch.id</span>
+            <span>{email}</span>
           </a>
         </div>
         <a
-          href="https://sd.spmblampung.com"
+          href={ppdbUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-gold btn-sm"
         >
-          PPDB 2026 <ArrowUpRight size={14} style={{ marginLeft: 4 }} />
+          PPDB {academicYear} <ArrowUpRight size={14} style={{ marginLeft: 4 }} />
         </a>
       </div>
     </aside>
   )
 }
 
-export function Navbar() {
+export function Navbar({ ppdbUrl = 'https://sd.spmblampung.com' }: { ppdbUrl?: string }) {
   const pathname = usePathname()
+  const navItems = [
+    { href: '/', label: 'Beranda' },
+    { href: '/profil', label: 'Profil' },
+    { href: '/program', label: 'Program' },
+    { href: '/berita', label: 'Berita' },
+    { href: '/galeri', label: 'Galeri' },
+    { href: ppdbUrl, label: 'PPDB', external: true },
+    { href: '/kontak', label: 'Kontak' },
+  ]
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -85,7 +90,7 @@ export function Navbar() {
           className={`nav-menu${open ? ' open' : ''}`}
           id="navMenu"
         >
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link
@@ -120,7 +125,14 @@ export function Navbar() {
   )
 }
 
-export function Footer() {
+export function FooterContent({ profil }: { profil: ProfilSekolahData | null }) {
+  const phone = profil?.topbarPhone ?? '(0721) 123456'
+  const email = profil?.topbarEmail ?? 'info@sdn3waygalih.sch.id'
+  const address = profil?.footerAddress ?? 'Jln. Desa nagaria No.Kel, Way Galih\\nKec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361'
+  const tagline = profil?.footerTagline ?? 'Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.'
+  const ppdbUrl = profil?.ppdbUrl ?? 'https://sd.spmblampung.com'
+  const officeHours = profil?.officeHours ?? 'Senin - Jumat, 07.00 - 15.00 WIB'
+
   return (
     <footer className="footer" id="kontak">
       <div className="container footer-inner reveal-group">
@@ -132,14 +144,14 @@ export function Footer() {
               <small>Sekolah Dasar Negeri</small>
             </div>
           </div>
-          <p>Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.</p>
+          <p>{tagline}</p>
         </Reveal>
         <Reveal className="footer-col">
           <h4>Tautan Cepat</h4>
           <Link href="/profil">Profil Sekolah</Link>
           <Link href="/program">Program Unggulan</Link>
           <Link href="/berita">Berita & Kegiatan</Link>
-          <Link href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer">
+          <Link href={ppdbUrl} target="_blank" rel="noopener noreferrer">
             Informasi PPDB
           </Link>
           <Link href="/galeri">Dokumentasi Galeri</Link>
@@ -149,23 +161,19 @@ export function Footer() {
           <h4>Kontak Sekolah</h4>
           <p className="footer-contact-item">
             <MapPinIcon size={16} className="footer-icon" />
-            <span>
-              Jln. Desa nagaria No.Kel, Way Galih
-              <br />
-              Kec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361
-            </span>
+            <span style={{ whiteSpace: 'pre-line' }}>{address}</span>
           </p>
           <p className="footer-contact-item">
             <PhoneIcon size={16} className="footer-icon" />
-            <a href="tel:0721123456">(0721) 123456</a>
+            <a href={`tel:${phone.replace(/[^+\\d]/g, '')}`}>{phone}</a>
           </p>
           <p className="footer-contact-item">
             <MailIcon size={16} className="footer-icon" />
-            <a href="mailto:info@sdn3waygalih.sch.id">info@sdn3waygalih.sch.id</a>
+            <a href={`mailto:${email}`}>{email}</a>
           </p>
           <p className="footer-contact-item">
             <ClockIcon size={16} className="footer-icon" />
-            <span>Senin - Jumat, 07.00 - 15.00 WIB</span>
+            <span>{officeHours}</span>
           </p>
         </Reveal>
       </div>

@@ -81,6 +81,15 @@ export const ProfilSekolah: GlobalConfig = {
               defaultValue: 'Mewujudkan peserta didik yang cerdas, berkarakter, dan berakhlak mulia.',
               label: 'Tagline (Footer)',
             },
+            {
+              name: 'mapEmbedUrl',
+              type: 'text',
+              label: 'URL Sematan Google Maps',
+              admin: { description: 'Gunakan URL embed dari Google Maps, bukan URL peta biasa.' },
+            },
+            { name: 'officeHours', type: 'text', label: 'Jam Pelayanan' },
+            { name: 'whatsappNumber', type: 'text', label: 'Nomor WhatsApp Admin', admin: { description: 'Format internasional tanpa tanda +, contoh 62812…' } },
+            { name: 'ppdbUrl', type: 'text', label: 'Tautan Situs PPDB Resmi' },
           ],
         },
         {
@@ -139,6 +148,39 @@ export const ProfilSekolah: GlobalConfig = {
               name: 'sejarah',
               type: 'textarea',
               label: 'Sejarah Singkat',
+            },
+          ],
+        },
+        {
+          label: 'Program Sekolah',
+          fields: [
+            {
+              name: 'featuredPrograms',
+              type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
+              fields: [
+                { name: 'title', type: 'text', label: 'Nama Program', required: true },
+                { name: 'description', type: 'textarea', label: 'Deskripsi Program', required: true },
+              ],
+              label: 'Program Unggulan',
+              labels: { singular: 'Program', plural: 'Program Unggulan' },
+            },
+            {
+              name: 'extracurriculars',
+              type: 'array',
+              admin: {
+                initCollapsed: true,
+                components: { RowLabel: '@/components/admin/RowLabel#RowLabel' },
+              },
+              fields: [
+                { name: 'name', type: 'text', label: 'Nama Ekstrakurikuler', required: true },
+                { name: 'schedule', type: 'text', label: 'Jadwal', required: true },
+              ],
+              label: 'Ekstrakurikuler',
+              labels: { singular: 'Ekstrakurikuler', plural: 'Ekstrakurikuler' },
             },
           ],
         },

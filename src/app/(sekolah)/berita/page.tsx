@@ -9,7 +9,7 @@ import { getBerita } from '@/utilities/sekolahData'
 export const metadata: Metadata = { title: 'Berita & Kegiatan' }
 
 export default async function BeritaPage() {
-  const news = await getBerita(24)
+  const news = await getBerita(24, false)
   const featured = news[0]
   const rest = news.slice(1)
 
@@ -26,7 +26,7 @@ export default async function BeritaPage() {
 
       <section className="section">
         <div className="container">
-          {featured && (
+          {featured ? (
             <div className="news-featured">
               <div className={`news-featured-thumb ${featured.thumbClass}`}>
                 <span className="news-cat">{featured.categoryLabel}</span>
@@ -41,6 +41,8 @@ export default async function BeritaPage() {
                 </Link>
               </div>
             </div>
+          ) : (
+            <div className="center"><p style={{ color: 'var(--gray)' }}>Belum ada berita yang dipublikasikan. Konten dapat ditambahkan melalui admin panel.</p></div>
           )}
 
           {rest.length > 0 ? (

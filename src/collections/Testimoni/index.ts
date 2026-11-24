@@ -14,9 +14,9 @@ export const Testimoni: CollectionConfig = {
     plural: 'Testimoni Wali Murid',
   },
   access: {
+    read: authenticatedOrPublished,
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
     update: authenticated,
   },
   admin: {

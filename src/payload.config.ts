@@ -119,6 +119,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
+      max: Number(process.env.DATABASE_POOL_MAX || 5),
     },
   }),
   // Urutan ini juga urutan menu di sidebar admin: konten sekolah dulu.

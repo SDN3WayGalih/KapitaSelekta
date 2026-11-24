@@ -4,12 +4,12 @@ import React from 'react'
 
 import { ArrowRightIcon } from '@/components/sekolah/Icons'
 import { Reveal } from '@/components/sekolah/Interactive'
-import { getPpdb } from '@/utilities/sekolahData'
+import { getPpdb, getFaq } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Informasi PPDB' }
 
 export default async function PpdbPage() {
-  const ppdb = await getPpdb()
+  const [ppdb, faq] = await Promise.all([getPpdb(), getFaq('ppdb')])
 
   return (
     <>
@@ -27,7 +27,7 @@ export default async function PpdbPage() {
           <Reveal className="section-head">
             <span className="section-label">Tahun Ajaran {ppdb?.academicYear ?? '2026/2027'}</span>
             <h2>{ppdb?.bannerTitle ?? 'Penerimaan Peserta Didik Baru'}</h2>
-            <p>{ppdb?.bannerDescription}</p>
+            <p>{ppdb?.bannerDescription ?? ''}</p>
           </Reveal>
 
           <div className="ppdb-info-grid">
@@ -69,10 +69,37 @@ export default async function PpdbPage() {
             ) : null}
           </div>
 
+          {faq.length > 0 && (
+            <section className="section" aria-labelledby="ppdb-faq-title">
+              <div className="container">
+                <div className="section-head"><h2 id="ppdb-faq-title">Pertanyaan Seputar PPDB</h2></div>
+                <div className="accordion reveal-group">
+                  {faq.map((item, index) => (
+                    <details className="accordion-item" key={`${item.question}-${index}`}>
+                      <summary className="accordion-head">{item.question}</summary>
+                      <div className="accordion-body"><p>{item.answer}</p></div>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
           <div className="center" style={{ marginTop: 40 }}>
+            {ppdb?.registrationFormUrl && (
+              <a
+                className="btn btn-outline-navy btn-lg"
+                href={ppdb.registrationFormUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+                download
+              >
+                Unduh Formulir Pendaftaran
+              </a>
+            )}
             <a
               className="btn btn-gold btn-lg"
-              href="https://sd.spmblampung.com"
+              href={ppdb?.officialUrl ?? 'https://sd.spmblampung.com'}
               rel="noopener noreferrer"
               target="_blank"
             >

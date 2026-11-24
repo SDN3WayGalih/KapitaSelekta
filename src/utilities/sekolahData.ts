@@ -46,15 +46,24 @@ export type ProfilSekolahData = {
   struktur?: { name: string; position: string; photoUrl?: string | null }[]
   statItems?: { value: number; suffix?: string; label: string }[]
   badgeItems?: { icon?: string; label: string }[]
+  featuredPrograms?: { title: string; description: string }[]
+  extracurriculars?: { name: string; schedule: string }[]
+  mapEmbedUrl?: string
+  officeHours?: string
+  whatsappNumber?: string
+  ppdbUrl?: string
 }
 
 export type PpdbData = {
   academicYear?: string
+  officialUrl?: string
   bannerTitle?: string
   bannerDescription?: string
   steps?: { title: string; description: string }[]
   timeline?: { date: string; title: string; description: string }[]
   requirements?: string[]
+  registrationFormUrl?: string | null
+  registrationFormName?: string | null
 }
 
 /* ------------------------------------------------------------------ */
@@ -95,12 +104,25 @@ function formatTanggalPenuh(d: Date | string | null | undefined): string {
 type MediaLike = {
   url?: string | null
   sizes?: Record<string, { url?: string | null } | undefined> | null
+  cloudinaryPublicId?: string | null
+  mimeType?: string | null
 }
 
 /** URL media (ukuran tertentu bila tersedia), aman untuk relasi yang belum di-populate. */
 function mediaUrl(media: unknown, size?: string): string | null {
   if (!media || typeof media !== 'object') return null
   const m = media as MediaLike
+  if (m.cloudinaryPublicId && (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME)) {
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME
+    const resourceType = m.mimeType?.startsWith('video/') || m.mimeType?.startsWith('audio/')
+      ? 'video'
+      : m.mimeType?.startsWith('image/') || m.mimeType === 'application/pdf'
+        ? 'image'
+        : 'raw'
+    const transformation = size && resourceType === 'image' ? '/w_1400,c_limit,q_auto,f_auto/' : '/'
+    const extension = m.mimeType === 'application/pdf' && !/\.pdf$/i.test(m.cloudinaryPublicId) ? '.pdf' : ''
+    return `https://res.cloudinary.com/${cloudName}/${resourceType}/upload${transformation}${m.cloudinaryPublicId}${extension}`
+  }
   return (size && m.sizes?.[size]?.url) || m.url || null
 }
 
@@ -380,7 +402,7 @@ export const DUMMY_BERITA_DETAIL_LIST: BeritaDetail[] = [
   },
 ]
 
-export async function getBerita(limit = 9): Promise<NewsItem[]> {
+export async function getBerita(limit = 9, useFallback = true): Promise<NewsItem[]> {
   try {
     const payload = await getClient()
     const { docs } = await payload.find({
@@ -389,12 +411,10 @@ export async function getBerita(limit = 9): Promise<NewsItem[]> {
       limit,
       overrideAccess: false,
       sort: '-publishedAt',
-      where: {
-        _status: { equals: 'published' },
-      },
+      where: {},
     })
 
-    if (docs && docs.length > 0) {
+    if (docs) {
       return docs.map((post, i) => ({
         category: (post.postType ?? 'berita') as NewsItem['category'],
         categoryLabel:
@@ -414,6 +434,7 @@ export async function getBerita(limit = 9): Promise<NewsItem[]> {
     // fallback ke dummy
   }
 
+  if (!useFallback) return []
   return DUMMY_BERITA_DETAIL_LIST.slice(0, limit).map((d) => ({
     category: d.category,
     categoryLabel: d.categoryLabel,
@@ -425,8 +446,8 @@ export async function getBerita(limit = 9): Promise<NewsItem[]> {
   }))
 }
 
-export async function getBeritaBySlug(slug: string): Promise<BeritaDetail | null> {
-  const dummy = DUMMY_BERITA_DETAIL_LIST.find((item) => item.slug === slug)
+export async function getBeritaBySlug(slug: string, useFallback = true): Promise<BeritaDetail | null> {
+  const dummy = useFallback ? DUMMY_BERITA_DETAIL_LIST.find((item) => item.slug === slug) : null
 
   try {
     const payload = await getClient()
@@ -435,10 +456,7 @@ export async function getBeritaBySlug(slug: string): Promise<BeritaDetail | null
       draft: false,
       limit: 1,
       overrideAccess: false,
-      where: {
-        slug: { equals: slug },
-        _status: { equals: 'published' },
-      },
+      where: { slug: { equals: slug } },
     })
 
     if (docs && docs[0]) {
@@ -473,30 +491,24 @@ export async function getBeritaBySlug(slug: string): Promise<BeritaDetail | null
         title: post.title,
         category: cat,
         categoryLabel: catLabel,
-        date: formatTanggalPenuh(post.publishedAt) || dummy?.date || 'Terbaru',
-        author: dummy?.author || 'Humas SDN 3 Way Galih',
-        readTime: dummy?.readTime || '3 menit baca',
-        excerpt: post.excerpt || dummy?.excerpt || '',
-        thumbClass: dummy?.thumbClass || 'thumb-1',
-        paragraphs:
-          extractedParagraphs.length > 0
-            ? extractedParagraphs
-            : dummy?.paragraphs || [post.excerpt || ''],
-        subheadings: dummy?.subheadings,
-        keyPoints: dummy?.keyPoints,
-        quote: dummy?.quote,
-        tags: dummy?.tags || [catLabel, 'SDN 3 Way Galih'],
+        date: formatTanggalPenuh(post.publishedAt) || 'Terbaru',
+        author: 'Humas SDN 3 Way Galih',
+        readTime: '3 menit baca',
+        excerpt: post.excerpt ?? '',
+        thumbClass: 'thumb-1',
+        paragraphs: extractedParagraphs.length > 0 ? extractedParagraphs : [post.excerpt || ''],
+        tags: [catLabel, 'SDN 3 Way Galih'],
       }
     }
   } catch {
     // fallback ke dummy
   }
 
-  return dummy || null
+  return dummy ?? null
 }
 
 export async function getAllBeritaSlugs(): Promise<string[]> {
-  const slugs = new Set<string>(DUMMY_BERITA_DETAIL_LIST.map((d) => d.slug))
+  const slugs = new Set<string>()
   try {
     const payload = await getClient()
     const { docs } = await payload.find({
@@ -516,11 +528,11 @@ export async function getAllBeritaSlugs(): Promise<string[]> {
 }
 
 export async function getBeritaTerkait(currentSlug: string, limit = 3): Promise<NewsItem[]> {
-  const all = await getBerita(12)
+  const all = await getBerita(12, false)
   const filtered = all.filter((n) => n.slug && n.slug !== currentSlug)
   if (filtered.length >= limit) return filtered.slice(0, limit)
 
-  const dummyFiltered = DUMMY_BERITA_DETAIL_LIST.filter((d) => d.slug !== currentSlug).map((d) => ({
+  const dummyFiltered = filtered.length === 0 ? DUMMY_BERITA_DETAIL_LIST.filter((d) => d.slug !== currentSlug).map((d) => ({
     category: d.category,
     categoryLabel: d.categoryLabel,
     date: d.date,
@@ -528,7 +540,7 @@ export async function getBeritaTerkait(currentSlug: string, limit = 3): Promise<
     slug: d.slug,
     thumbClass: d.thumbClass,
     title: d.title,
-  }))
+  })) : []
 
   const combined = [...filtered]
   for (const item of dummyFiltered) {
@@ -582,7 +594,7 @@ export const DUMMY_AGENDA_LIST: AgendaItem[] = [
   },
 ]
 
-export async function getAgenda(limit = 6): Promise<AgendaItem[]> {
+export async function getAgenda(limit = 6, useFallback = true): Promise<AgendaItem[]> {
   try {
     const payload = await getClient()
     const awalHariIni = new Date()
@@ -596,12 +608,7 @@ export async function getAgenda(limit = 6): Promise<AgendaItem[]> {
       limit,
       overrideAccess: false,
       sort: 'date',
-      where: {
-        and: [
-          { _status: { equals: 'published' } },
-          { date: { greater_than_equal: awalHariIni.toISOString() } },
-        ],
-      },
+      where: { date: { greater_than_equal: awalHariIni.toISOString() } },
     })
 
     // Belum ada agenda mendatang: tampilkan yang terakhir berlangsung agar seksi tidak kosong.
@@ -612,7 +619,7 @@ export async function getAgenda(limit = 6): Promise<AgendaItem[]> {
         limit,
         overrideAccess: false,
         sort: '-date',
-        where: { _status: { equals: 'published' } },
+        where: {},
       }))
     }
 
@@ -631,7 +638,7 @@ export async function getAgenda(limit = 6): Promise<AgendaItem[]> {
     // fallback ke dummy
   }
 
-  return DUMMY_AGENDA_LIST.slice(0, limit)
+  return useFallback ? DUMMY_AGENDA_LIST.slice(0, limit) : []
 }
 
 /* ------------------------------------------------------------------ */
@@ -671,7 +678,7 @@ export const DUMMY_FAQ_LIST: FaqItem[] = [
   },
 ]
 
-export async function getFaq(category?: 'ppdb' | 'umum', limit = 10): Promise<FaqItem[]> {
+export async function getFaq(category?: 'ppdb' | 'umum', limit = 10, useFallback = true): Promise<FaqItem[]> {
   try {
     const payload = await getClient()
     const { docs } = await payload.find({
@@ -680,10 +687,7 @@ export async function getFaq(category?: 'ppdb' | 'umum', limit = 10): Promise<Fa
       limit,
       overrideAccess: false,
       sort: 'order',
-      where: {
-        _status: { equals: 'published' },
-        ...(category ? { category: { equals: category } } : {}),
-      },
+      where: category ? { category: { equals: category } } : undefined,
     })
 
     if (docs && docs.length > 0) {
@@ -696,7 +700,7 @@ export async function getFaq(category?: 'ppdb' | 'umum', limit = 10): Promise<Fa
     // fallback ke dummy
   }
 
-  return DUMMY_FAQ_LIST.slice(0, limit)
+  return useFallback ? DUMMY_FAQ_LIST.slice(0, limit) : []
 }
 
 /* ------------------------------------------------------------------ */
@@ -715,7 +719,7 @@ export const DUMMY_GALERI_LIST: GaleriItem[] = [
   { caption: 'Pemberian Piagam Apresiasi Prestasi Siswa Berbakat', imageUrl: null },
 ]
 
-export async function getGaleri(limit = 12): Promise<GaleriItem[]> {
+export async function getGaleri(limit = 12, useFallback = true): Promise<GaleriItem[]> {
   try {
     const payload = await getClient()
     const { docs } = await payload.find({
@@ -725,12 +729,10 @@ export async function getGaleri(limit = 12): Promise<GaleriItem[]> {
       limit,
       overrideAccess: false,
       sort: '-publishedAt',
-      where: {
-        _status: { equals: 'published' },
-      },
+      where: {},
     })
 
-    if (docs && docs.length > 0) {
+    if (docs) {
       return docs.map((doc) => {
         const image = typeof doc.image === 'object' ? doc.image : null
         return {
@@ -744,14 +746,14 @@ export async function getGaleri(limit = 12): Promise<GaleriItem[]> {
     // fallback ke dummy
   }
 
-  return DUMMY_GALERI_LIST.slice(0, limit)
+  return useFallback ? DUMMY_GALERI_LIST.slice(0, limit) : []
 }
 
 /* ------------------------------------------------------------------ */
 /* Testimoni                                                           */
 /* ------------------------------------------------------------------ */
 
-export async function getTestimoni(limit = 6): Promise<
+export async function getTestimoni(limit = 6, useFallback = true): Promise<
   { name: string; relation: string; quote: string }[]
 > {
   try {
@@ -762,9 +764,7 @@ export async function getTestimoni(limit = 6): Promise<
       limit,
       overrideAccess: false,
       sort: '-createdAt',
-      where: {
-        _status: { equals: 'published' },
-      },
+      where: {},
     })
 
     return docs.map((doc) => ({
@@ -881,6 +881,12 @@ export async function getProfilSekolah(): Promise<ProfilSekolahData | null> {
     if (global && global.heroTitle) {
       return {
         badgeItems: global.badgeItems?.map((b) => ({ icon: b.icon ?? '', label: b.label })),
+        featuredPrograms: global.featuredPrograms?.map((p) => ({ title: p.title, description: p.description })),
+        extracurriculars: global.extracurriculars?.map((e) => ({ name: e.name, schedule: e.schedule })),
+        mapEmbedUrl: global.mapEmbedUrl ?? undefined,
+        officeHours: global.officeHours ?? undefined,
+        whatsappNumber: global.whatsappNumber ?? undefined,
+        ppdbUrl: global.ppdbUrl ?? undefined,
         footerAddress: global.footerAddress ?? undefined,
         footerTagline: global.footerTagline ?? undefined,
         heroBadge: global.heroBadge ?? undefined,
@@ -917,7 +923,7 @@ export async function getProfilSekolah(): Promise<ProfilSekolahData | null> {
   return DUMMY_PROFIL_SEKOLAH
 }
 
-export async function getPpdb(): Promise<PpdbData | null> {
+export async function getPpdb(useFallback = true): Promise<PpdbData | null> {
   try {
     const payload = await getClient()
     const global = await payload.findGlobal({ slug: 'ppdb' })
@@ -927,6 +933,11 @@ export async function getPpdb(): Promise<PpdbData | null> {
         bannerDescription: global.bannerDescription ?? undefined,
         bannerTitle: global.bannerTitle ?? undefined,
         requirements: global.requirements?.map((r) => r.requirement),
+        officialUrl: global.officialUrl ?? undefined,
+        registrationFormUrl: mediaUrl(global.registrationForm, 'large'),
+        registrationFormName: typeof global.registrationForm === 'object' && global.registrationForm
+          ? global.registrationForm.filename ?? null
+          : null,
         steps: global.steps?.map((s) => ({ description: s.description, title: s.title })),
         timeline: global.timeline?.map((t) => ({
           date: t.date,
@@ -939,5 +950,5 @@ export async function getPpdb(): Promise<PpdbData | null> {
     // fallback ke dummy
   }
 
-  return DUMMY_PPDB
+  return useFallback ? DUMMY_PPDB : null
 }

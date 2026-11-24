@@ -36,6 +36,7 @@ import { default as default_0eb51a62b4e79455280204fd108ddca4 } from '@/component
 import { default as default_f4af7d2e09682417843e76cfdf4fd772 } from '@/components/admin/dashboard/AksiCepat'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
+import { CloudinaryClientUploadHandler as CloudinaryClientUploadHandler_d082512b0d29edcf3859a7c92c33e4db } from '@jhb.software/payload-cloudinary-plugin/client'
 
 /** @type import('payload').ImportMap */
 export const importMap = {
@@ -76,5 +77,6 @@ export const importMap = {
   "@/components/admin/dashboard/AgendaMendatang#default": default_0eb51a62b4e79455280204fd108ddca4,
   "@/components/admin/dashboard/AksiCepat#default": default_f4af7d2e09682417843e76cfdf4fd772,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  "@jhb.software/payload-cloudinary-plugin/client#CloudinaryClientUploadHandler": CloudinaryClientUploadHandler_d082512b0d29edcf3859a7c92c33e4db
 }

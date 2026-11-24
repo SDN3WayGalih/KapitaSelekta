@@ -137,6 +137,12 @@ export const Ppdb: GlobalConfig = {
               },
             },
             {
+              name: 'officialUrl',
+              type: 'text',
+              label: 'Tautan Situs PPDB Resmi',
+              defaultValue: 'https://sd.spmblampung.com',
+            },
+            {
               name: 'registrationForm',
               type: 'upload',
               admin: {

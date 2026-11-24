@@ -3,6 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
+import { payloadCloudinaryPlugin } from '@jhb.software/payload-cloudinary-plugin'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
@@ -161,10 +162,12 @@ export const plugins: Plugin[] = [
       },
     },
   }),
-  // Foto disimpan di Supabase Storage (S3-compatible) agar bisa diakses dari
-  // semua lingkungan. Tanpa variabel S3_* di .env, upload kembali ke public/media.
   s3Storage({
-    enabled: Boolean(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID),
+    enabled: Boolean(
+      process.env.S3_BUCKET &&
+        process.env.S3_ACCESS_KEY_ID &&
+        !process.env.CLOUDINARY_CLOUD_NAME,
+    ),
     collections: {
       media: {
         // Bucket publik: browser mengambil file langsung dari CDN Supabase.
@@ -183,6 +186,25 @@ export const plugins: Plugin[] = [
         secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
       },
     },
+  }),
+  // Terapkan setelah adapter legacy agar Cloudinary menjadi storage prioritas.
+  // Bila credential belum tersedia, plugin dinonaktifkan dan S3 tetap menjadi fallback.
+  payloadCloudinaryPlugin({
+    enabled: Boolean(
+      process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET,
+    ),
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    credentials: {
+      apiKey: process.env.CLOUDINARY_API_KEY || '',
+      apiSecret: process.env.CLOUDINARY_API_SECRET || '',
+    },
+    collections: {
+      media: true,
+    },
+    folder: process.env.CLOUDINARY_FOLDER || 'sdn3-way-galih',
+    useFilename: true,
   }),
   ramahAdmin,
 ]

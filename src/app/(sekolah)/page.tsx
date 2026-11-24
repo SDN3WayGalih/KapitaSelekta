@@ -20,6 +20,8 @@ import {
   getBerita,
   getGaleri,
   getProfilSekolah,
+  getPpdb,
+  getTestimoni,
 } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = {
@@ -120,11 +122,13 @@ const FALLBACK_AGENDA = [
 ]
 
 export default async function BerandaPage() {
-  const [profil, news, galeri, agendaList] = await Promise.all([
+  const [profil, news, galeri, agendaList, ppdb, testimonials] = await Promise.all([
     getProfilSekolah(),
     getBerita(6),
     getGaleri(6),
-    getAgenda(3),
+    getAgenda(3, false),
+    getPpdb(false),
+    getTestimoni(3),
   ])
 
   const badges = profil?.badgeItems?.length ? profil.badgeItems : FALLBACK_BADGES
@@ -133,9 +137,13 @@ export default async function BerandaPage() {
     ? galeri.map((g) => ({ caption: g.caption, imageUrl: g.imageUrl, thumbUrl: g.thumbUrl }))
     : FALLBACK_GALLERY
   const agenda = agendaList.length ? agendaList : FALLBACK_AGENDA
+  const ppdbAcademicYear = ppdb?.academicYear
+  const ppdbTitle = ppdb?.bannerTitle
+  const ppdbDescription = ppdb?.bannerDescription
+  const ppdbUrl = profil?.ppdbUrl ?? 'https://sd.spmblampung.com'
 
   const heroTitle = profil?.heroTitle ?? 'SDN 3 Way Galih'
-  const heroSubtitle = 'Sekolah Dasar Negeri Tanjung Bintang'
+  const heroSubtitle = profil?.heroSubtitle ?? 'Sekolah Dasar Negeri Tanjung Bintang'
   const heroDescription =
     profil?.heroDescription ??
     'Mewujudkan lingkungan pendidikan dasar yang aman, disiplin, berakhlak mulia, dan berorientasi pada perkembangan karakter serta potensi setiap peserta didik.'
@@ -161,9 +169,9 @@ export default async function BerandaPage() {
               <Link className="btn btn-gold" href="/profil">
                 Profil Sekolah
               </Link>
-              <Link className="btn btn-outline-light" href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer">
-                Informasi PPDB 2026/2027
-              </Link>
+              {ppdb && <Link className="btn btn-outline-light" href={ppdbUrl} target="_blank" rel="noopener noreferrer">
+                Informasi PPDB {ppdbAcademicYear}
+              </Link>}
             </div>
           </div>
           <div className="hero-media">
@@ -226,20 +234,20 @@ export default async function BerandaPage() {
       </section>
 
       {/* Banner Informasi PPDB */}
-      <section className="ppdb-banner" id="ppdb">
+      {ppdb && <section className="ppdb-banner" id="ppdb">
         <div className="container">
           <div className="ppdb-card">
             <div className="ppdb-text">
-              <span className="ppdb-tag">Tahun Ajaran 2026/2027</span>
-              <h2>Penerimaan Peserta Didik Baru (PPDB)</h2>
-              <p>Informasi jadwal tahapan, persyaratan administrasi, dan alur pendaftaran siswa baru.</p>
+              <span className="ppdb-tag">Tahun Ajaran {ppdbAcademicYear}</span>
+              <h2>{ppdbTitle}</h2>
+              <p>{ppdbDescription}</p>
             </div>
-            <Link className="btn btn-gold btn-lg" href="https://sd.spmblampung.com" target="_blank" rel="noopener noreferrer">
+            <Link className="btn btn-gold btn-lg" href={ppdbUrl} target="_blank" rel="noopener noreferrer">
               Pelajari Alur PPDB
             </Link>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Berita & Kegiatan */}
       <section className="berita section" id="berita">
@@ -259,7 +267,8 @@ export default async function BerandaPage() {
             <h2>Agenda Kegiatan Sekolah</h2>
             <p className="section-subtitle">Jadwal kegiatan akademik dan agenda penting mendatang.</p>
           </div>
-          <div className="agenda-list reveal-group">
+          {agenda.length > 0 ? (
+            <div className="agenda-list reveal-group">
             {agenda.map((a) => (
               <div className="agenda-item" key={a.title}>
                 <div className="agenda-date">
@@ -272,9 +281,31 @@ export default async function BerandaPage() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          ) : (
+            <p className="center" style={{ color: 'var(--gray)' }}>Belum ada agenda yang dipublikasikan.</p>
+          )}
         </div>
       </section>
+
+      {testimonials.length > 0 && (
+        <section className="section section-alt" aria-labelledby="testimoni-title">
+          <div className="container">
+            <div className="section-head">
+              <h2 id="testimoni-title">Cerita Wali Murid</h2>
+              <p className="section-subtitle">Pengalaman keluarga dalam mendampingi pendidikan anak di sekolah.</p>
+            </div>
+            <div className="testi-grid reveal-group">
+              {testimonials.map((item) => (
+                <article className="testi-card" key={`${item.name}-${item.relation}`}>
+                  <p className="testi-quote">“{item.quote}”</p>
+                  <p className="testi-name"><strong>{item.name}</strong><small>{item.relation}</small></p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Dokumentasi Galeri */}
       <section className="galeri section" id="galeri">

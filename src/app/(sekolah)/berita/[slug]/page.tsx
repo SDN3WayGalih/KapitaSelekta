@@ -38,7 +38,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const decodedSlug = decodeURIComponent(slug)
-  const detail = await getBeritaBySlug(decodedSlug)
+  const detail = await getBeritaBySlug(decodedSlug, false)
 
   if (!detail) {
     return {
@@ -61,7 +61,7 @@ export default async function BeritaDetailPage({ params }: Props) {
   const { slug } = await params
   const decodedSlug = decodeURIComponent(slug)
   const [detail, relatedNews, profil] = await Promise.all([
-    getBeritaBySlug(decodedSlug),
+    getBeritaBySlug(decodedSlug, false),
     getBeritaTerkait(decodedSlug, 3),
     getProfilSekolah(),
   ])

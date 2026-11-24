@@ -14,6 +14,7 @@ import {
   SparklesIcon,
 } from '@/components/sekolah/Icons'
 import { Reveal } from '@/components/sekolah/Interactive'
+import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Program Sekolah' }
 
@@ -49,7 +50,15 @@ const EKSKUL = [
   { icon: <PaletteIcon size={26} />, nama: 'Seni Rupa & Menggambar', jadwal: 'Setiap Senin sore' },
 ]
 
-export default function ProgramPage() {
+export default async function ProgramPage() {
+  const profil = await getProfilSekolah()
+  const programs = profil?.featuredPrograms?.length
+    ? profil.featuredPrograms.map((program, index) => ({ ...program, icon: PROGRAM[index % PROGRAM.length].icon }))
+    : PROGRAM
+  const extracurriculars = profil?.extracurriculars?.length
+    ? profil.extracurriculars.map((item, index) => ({ ...item, icon: EKSKUL[index % EKSKUL.length].icon, nama: item.name, jadwal: item.schedule }))
+    : EKSKUL
+
   return (
     <>
       <section className="page-hero">
@@ -67,13 +76,13 @@ export default function ProgramPage() {
             <h2>Program Unggulan</h2>
           </div>
           <div className="program-grid reveal-group">
-            {PROGRAM.map((p) => (
+            {programs.map((p) => (
               <div className="program-card" key={p.title}>
                 <div className="program-icon" aria-hidden="true">
                   {p.icon}
                 </div>
                 <h3>{p.title}</h3>
-                <p>{p.desc}</p>
+                <p>{'description' in p ? p.description : p.desc}</p>
               </div>
             ))}
           </div>
@@ -86,7 +95,7 @@ export default function ProgramPage() {
             <h2>Ekstrakurikuler</h2>
           </div>
           <div className="ekskul-grid reveal-group">
-            {EKSKUL.map((e) => (
+            {extracurriculars.map((e) => (
               <div className="ekskul-item" key={e.nama}>
                 <span className="ekskul-icon" aria-hidden="true">
                   {e.icon}

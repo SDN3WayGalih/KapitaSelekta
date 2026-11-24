@@ -3,7 +3,8 @@ import Link from 'next/link'
 import React from 'react'
 
 import { ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from '@/components/sekolah/Icons'
-import { ContactForm, Reveal } from '@/components/sekolah/Interactive'
+import { ContactForm } from '@/components/sekolah/Interactive'
+import { getProfilSekolah } from '@/utilities/sekolahData'
 
 export const metadata: Metadata = { title: 'Kontak Kami' }
 
@@ -11,19 +12,8 @@ const WA_ADMIN = '6282159153743'
 
 const WA_MESSAGE = 'Halo, saya ingin bertanya terkait PPDB'
 
-// Alamat lengkap sekolah — dipakai kartu Alamat dan peta Google Maps di bawah.
 const SCHOOL_ADDRESS =
   'Jln. Desa nagaria No.Kel, Way Galih, Kec. Tj. Bintang, Kabupaten Lampung Selatan, Lampung 35361'
-
-// Embed Google Maps tanpa API key (q + output=embed).
-const MAPS_EMBED_URL = `https://maps.google.com/maps?q=${encodeURIComponent(SCHOOL_ADDRESS)}&output=embed`
-
-// Ikon hitam-putih (SVG) agar selaras dengan ikon telepon dan email.
-const ICON_MAP_PIN = (
-  <svg aria-hidden="true" fill="currentColor" height="30" viewBox="0 0 24 24" width="30">
-    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-  </svg>
-)
 
 const ICON_WHATSAPP = (
   <svg aria-hidden="true" fill="currentColor" height="30" viewBox="0 0 24 24" width="30">
@@ -32,30 +22,24 @@ const ICON_WHATSAPP = (
 )
 
 
-const CARDS = [
-  {
-    icon: <MapPinIcon size={24} />,
-    label: 'Alamat Sekolah',
-    value: SCHOOL_ADDRESS,
-  },
-  {
-    icon: <PhoneIcon size={24} />,
-    label: 'Telepon Kantor',
-    value: '(0721) 123456',
-  },
-  {
-    icon: <MailIcon size={24} />,
-    label: 'Email Resmi',
-    value: 'info@sdn3waygalih.sch.id',
-  },
-  {
-    icon: <ClockIcon size={24} />,
-    label: 'Jam Pelayanan',
-    value: 'Senin - Jumat\n07.00 - 15.00 WIB',
-  },
-]
+export default async function KontakPage() {
+  const profil = await getProfilSekolah()
+  const phone = profil?.topbarPhone ?? '(0721) 123456'
+  const email = profil?.topbarEmail ?? 'info@sdn3waygalih.sch.id'
+  const address = profil?.footerAddress ?? SCHOOL_ADDRESS
+  const whatsapp = profil?.whatsappNumber ?? WA_ADMIN
+  const officeHours = profil?.officeHours ?? 'Senin - Jumat\n07.00 - 15.00 WIB'
+  const cards = [
+    { icon: <MapPinIcon size={24} />, label: 'Alamat Sekolah', value: address },
+    { icon: <PhoneIcon size={24} />, label: 'Telepon Kantor', value: phone },
+    { icon: <MailIcon size={24} />, label: 'Email Resmi', value: email },
+    { icon: <ClockIcon size={24} />, label: 'Jam Pelayanan', value: officeHours },
+  ]
+  const mapUrl = profil?.mapEmbedUrl?.startsWith('https://')
+    ? profil.mapEmbedUrl
+    : `https://maps.google.com/maps?q=${encodeURIComponent(address.replace(/\n/g, ' '))}&output=embed`
+  const ppdbUrl = profil?.ppdbUrl ?? 'https://sd.spmblampung.com'
 
-export default function KontakPage() {
   return (
     <>
       <section className="page-hero">
@@ -71,7 +55,7 @@ export default function KontakPage() {
         <div className="container contact-grid">
           <div>
             <div className="contact-cards">
-              {CARDS.map((card) => (
+              {cards.map((card) => (
                 <div className="contact-card" key={card.label}>
                   <span className="cc-icon" aria-hidden="true">
                     {card.icon}
@@ -82,7 +66,7 @@ export default function KontakPage() {
               ))}
               <Link
                 className="contact-card contact-card-link contact-card-wa"
-                href={`https://wa.me/${WA_ADMIN}?text=${encodeURIComponent(WA_MESSAGE)}`}
+                href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(WA_MESSAGE)}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -96,12 +80,17 @@ export default function KontakPage() {
               <iframe
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                src={MAPS_EMBED_URL}
+                src={mapUrl}
                 title="Peta Lokasi SDN 3 Way Galih"
               />
             </div>
           </div>
-          <ContactForm />
+          <div>
+            <ContactForm />
+            <p style={{ marginTop: 20 }}>
+              <Link href={ppdbUrl} rel="noopener noreferrer" target="_blank">Informasi pendaftaran PPDB ↗</Link>
+            </p>
+          </div>
         </div>
       </section>
     </>

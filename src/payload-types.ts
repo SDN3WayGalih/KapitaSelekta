@@ -246,6 +246,7 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  cloudinaryPublicId?: string | null;
   /**
    * Jelaskan isi foto dalam satu kalimat, contoh: "Siswa kelas 6 mengikuti upacara bendera". Dibacakan untuk pengunjung tunanetra.
    */
@@ -265,6 +266,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  _objectKey?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -1287,8 +1289,10 @@ export interface TestimoniSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  cloudinaryPublicId?: T;
   alt?: T;
   caption?: T;
+  _objectKey?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1847,6 +1851,16 @@ export interface ProfilSekolah {
   topbarEmail?: string | null;
   footerAddress?: string | null;
   footerTagline?: string | null;
+  /**
+   * Gunakan URL embed dari Google Maps, bukan URL peta biasa.
+   */
+  mapEmbedUrl?: string | null;
+  officeHours?: string | null;
+  /**
+   * Format internasional tanpa tanda +, contoh 62812…
+   */
+  whatsappNumber?: string | null;
+  ppdbUrl?: string | null;
   sambutanPhoto?: (number | null) | Media;
   sambutanQuote?: string | null;
   sambutanName?: string | null;
@@ -1859,6 +1873,20 @@ export interface ProfilSekolah {
       }[]
     | null;
   sejarah?: string | null;
+  featuredPrograms?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  extracurriculars?:
+    | {
+        name: string;
+        schedule: string;
+        id?: string | null;
+      }[]
+    | null;
   infoItems?:
     | {
         label: string;
@@ -1933,6 +1961,7 @@ export interface Ppdb {
         id?: string | null;
       }[]
     | null;
+  officialUrl?: string | null;
   /**
    * File formulir yang dapat diunduh pengunjung (opsional).
    */
@@ -2012,6 +2041,10 @@ export interface ProfilSekolahSelect<T extends boolean = true> {
   topbarEmail?: T;
   footerAddress?: T;
   footerTagline?: T;
+  mapEmbedUrl?: T;
+  officeHours?: T;
+  whatsappNumber?: T;
+  ppdbUrl?: T;
   sambutanPhoto?: T;
   sambutanQuote?: T;
   sambutanName?: T;
@@ -2024,6 +2057,20 @@ export interface ProfilSekolahSelect<T extends boolean = true> {
         id?: T;
       };
   sejarah?: T;
+  featuredPrograms?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  extracurriculars?:
+    | T
+    | {
+        name?: T;
+        schedule?: T;
+        id?: T;
+      };
   infoItems?:
     | T
     | {
@@ -2087,6 +2134,7 @@ export interface PpdbSelect<T extends boolean = true> {
         requirement?: T;
         id?: T;
       };
+  officialUrl?: T;
   registrationForm?: T;
   updatedAt?: T;
   createdAt?: T;

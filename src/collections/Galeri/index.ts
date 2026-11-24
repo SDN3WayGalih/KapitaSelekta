@@ -14,9 +14,9 @@ export const Galeri: CollectionConfig = {
     plural: 'Galeri',
   },
   access: {
+    read: authenticatedOrPublished,
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
     update: authenticated,
   },
   admin: {

@@ -14,9 +14,9 @@ export const Agenda: CollectionConfig = {
     plural: 'Agenda Sekolah',
   },
   access: {
+    read: authenticatedOrPublished,
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
     update: authenticated,
   },
   admin: {

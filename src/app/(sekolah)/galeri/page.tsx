@@ -8,7 +8,7 @@ import { getGaleri } from '@/utilities/sekolahData'
 export const metadata: Metadata = { title: 'Galeri' }
 
 export default async function GaleriPage() {
-  const galeri = await getGaleri(100)
+  const galeri = await getGaleri(100, false)
 
   return (
     <>

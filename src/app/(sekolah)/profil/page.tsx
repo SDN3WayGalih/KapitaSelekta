@@ -4,6 +4,7 @@ import React from 'react'
 import { Award, BookOpen, Clock, Landmark, School, Users, type LucideIcon } from 'lucide-react'
 
 import { Reveal } from '@/components/sekolah/Interactive'
+import { DUMMY_PROFIL_SEKOLAH } from '@/utilities/sekolahData'
 import {
   DirektoriGuru,
   FotoPegawai,
@@ -163,14 +164,16 @@ const FALLBACK_SEJARAH = `UPTD SD Negeri 3 Way Galih merupakan salah satu lembag
 
 export default async function ProfilPage() {
   const profil = await getProfilSekolah()
+  const hasCmsProfile = profil !== DUMMY_PROFIL_SEKOLAH
 
-  const visi = profil?.visi ?? FALLBACK_VISI
-  const misi = profil?.misi?.length ? profil.misi : FALLBACK_MISI
-  const sejarah = profil?.sejarah ?? FALLBACK_SEJARAH
-  const info = profil?.infoItems?.length ? profil.infoItems : FALLBACK_INFO
+  const visi = profil?.visi ?? (hasCmsProfile ? '' : FALLBACK_VISI)
+  const misi = profil?.misi?.length ? profil.misi : hasCmsProfile ? [] : FALLBACK_MISI
+  const sejarah = profil?.sejarah ?? (hasCmsProfile ? '' : FALLBACK_SEJARAH)
+  const info = profil?.infoItems?.length ? profil.infoItems : hasCmsProfile ? [] : FALLBACK_INFO
   const struktur = profil?.struktur?.length
     ? profil.struktur.map((s) => ({ jabatan: s.position, nama: s.name, foto: s.photoUrl ?? null }))
-    : FALLBACK_STRUKTUR
+    : hasCmsProfile ? [] : FALLBACK_STRUKTUR
+  const statistik = profil?.statItems ?? []
   const bagan = susunBagan(struktur)
   const { kartuGuru, kartuLain } = susunDirektori(bagan)
 
@@ -237,6 +240,22 @@ export default async function ProfilPage() {
           </div>
         </div>
       </section>
+
+      {statistik.length > 0 && (
+        <section className="section" aria-labelledby="statistik-title">
+          <div className="container">
+            <div className="section-head"><h2 id="statistik-title">Statistik Sekolah</h2></div>
+            <div className="info-grid reveal-group">
+              {statistik.map((item) => (
+                <Reveal className="info-item" key={item.label}>
+                  <strong>{item.value.toLocaleString('id-ID')}{item.suffix ?? ''}</strong>
+                  <small>{item.label}</small>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <div className="container">
